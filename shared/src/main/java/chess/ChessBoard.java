@@ -11,8 +11,8 @@ import java.util.Arrays;
 public class ChessBoard {
     private ChessPiece[][] squares = new ChessPiece[8][8];
     public ChessBoard() {
-        //I imagine that this will setup a new chess game, with all the pieces at default
-    }
+        resetBoard();
+     }
 
     @Override
     public boolean equals(Object o) {
@@ -41,7 +41,7 @@ public class ChessBoard {
         squares[position.getRow()][position.getColumn()] = piece;
     }
     public void removePiece(ChessPosition position, ChessPiece piece) {
-//        not sure how confident on this guy I am, maybe we don't need piece and maybe null isn't the right value here
+//        not sure how confident on this guy I am, what would I do wiht piece?
         squares[position.getRow()][position.getColumn()] = null;
     }
 
@@ -61,8 +61,7 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        //I imagine that this will setup a new chess game, with all the pieces at default
-        //Do I just throw down a bunch of pieces? How will we which team owns the piece
+        //Do I just throw down a bunch of pieces? How will we which team owns the piece?
         throw new RuntimeException("Not implemented");
     }
 }

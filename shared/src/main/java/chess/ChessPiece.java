@@ -1,7 +1,10 @@
 package chess;
 
+import chess.moves.*;
+
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * Represents a single chess piece
@@ -10,8 +13,11 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessPiece {
-
+    private PieceType pieceType;
+    private ChessGame.TeamColor teamColor;
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        pieceType = type;
+        teamColor = pieceColor;
     }
 
     /**
@@ -30,14 +36,14 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        throw new RuntimeException("Not implemented");
+        return teamColor;
     }
 
     /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        throw new RuntimeException("Not implemented");
+        return pieceType;
     }
 
     /**
@@ -48,11 +54,14 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-//        friendly pieces blocking movement paths. The pieceMoves method
-//        will need to take into account the type of piece, and the location
-//        of other pieces on the board.
-        ChessPiece myPiece = board.getPiece(myPosition);
-        return null;
-
+        return switch (pieceType) {
+            case BISHOP -> new BishopMovesCalculator().pieceMoves(board, myPosition);
+            case KING -> new KingMovesCalculator().pieceMoves(board, myPosition);
+            case KNIGHT -> new KnightMovesCalculator().pieceMoves(board, myPosition);
+            case PAWN -> new PawnMovesCalculator().pieceMoves(board, myPosition);
+            case QUEEN -> new QueenMovesCalculator().pieceMoves(board, myPosition);
+            case ROOK -> new RookMovesCalculator().pieceMoves(board, myPosition);
+            default -> new HashSet<>();
+        };
     }
 }

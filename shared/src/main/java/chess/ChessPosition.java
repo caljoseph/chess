@@ -9,23 +9,18 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessPosition {
-
     private final int row;
     private final int col;
-
     public ChessPosition(int row, int col) {
         this.row = row;
         this.col = col;
     }
-
-    /**
-     * @return which row this position is in
-     * 1 codes for the bottom row
-     */
     public int getRow() {
         return row;
     }
-
+    public int getColumn() {
+        return col;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -44,11 +39,6 @@ public class ChessPosition {
         return Objects.hash(getRow(), col);
     }
 
-    /**
-     * @return which column this position is in
-     * 1 codes for the left row
-     */
-    public int getColumn() {
-        return col;
-    }
+
+
 }

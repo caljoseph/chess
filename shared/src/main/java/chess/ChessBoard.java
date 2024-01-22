@@ -24,7 +24,7 @@ public class ChessBoard {
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
-        for (int row = 0; row < 8; row++) {
+        for (int row = 7; row >= 0; row--) {
             for (int col = 0; col < 8; col++) {
                 ChessPiece current_piece = squares[row][col];
                 result.append('|');
@@ -53,7 +53,7 @@ public class ChessBoard {
                     result.append(' ');
                 }
             }
-            if (row < 7) {
+            if (row > 0) {
                 result.append("|\n");
             } else {
                 result.append('|');  // Last row, no newline after the last '|'
@@ -62,7 +62,7 @@ public class ChessBoard {
         return result.toString();
     }
     public ChessBoard(){
-        resetBoard();
+
      }
 
     /**
@@ -77,10 +77,10 @@ public class ChessBoard {
 
 
 
-    public void removePiece(ChessPosition position, ChessPiece piece) {
-//        not sure how confident on this guy I am, what would I do wiht piece?
-        squares[position.getRow() - 1][position.getColumn() - 1] = null;
-    }
+//    public void removePiece(ChessPosition position, ChessPiece piece) {
+////        not sure how confident on this guy I am, what would I do wiht piece?
+//        squares[position.getRow() - 1][position.getColumn() - 1] = null;
+//    }
 
     /**
      * Gets a chess piece on the chessboard

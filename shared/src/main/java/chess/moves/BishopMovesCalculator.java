@@ -13,12 +13,9 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
         addDiagonals(board, myPosition, 1, -1);
         addDiagonals(board, myPosition, -1, 1);
         addDiagonals(board, myPosition, -1, -1);
-
         return moves;
     }
-
     HashSet<ChessMove> moves = new HashSet<ChessMove>();
-
     void addDiagonals(ChessBoard board, ChessPosition startPosition, int rowDirection, int colDirection) {
         ChessPosition currentPosition = startPosition;
         while (1 < currentPosition.getRow() && currentPosition.getRow() < 8
@@ -27,14 +24,17 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
             if (board.getPiece(currentPosition) == null){
                 ChessMove currentMove = new ChessMove(startPosition, currentPosition, null);
                 moves.add(currentMove);
+                //adds empty squares
             }
             else if(!board.getPiece(currentPosition).getTeamColor().equals(board.getPiece(startPosition).getTeamColor())) {
                 ChessMove currentMove = new ChessMove(startPosition, currentPosition, null);
                 moves.add(currentMove);
                 break;
+                //stops at capture
             }
             else {
                 break;
+                //stops and does not permit move on encounter with teammate
             }
 
         }

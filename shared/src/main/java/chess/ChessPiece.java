@@ -21,8 +21,10 @@ public class ChessPiece {
         teamColor = pieceColor;
     }
     public ChessPiece(ChessPiece o) {
-        pieceType = o.pieceType;
-        teamColor = o.teamColor;
+        if(o != null) {
+            pieceType = o.pieceType;
+            teamColor = o.teamColor;
+        }
     }
 
     /**

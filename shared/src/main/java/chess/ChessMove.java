@@ -9,9 +9,37 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessMove {
-    ChessPosition startPosition;
-    ChessPosition endPosition;
-    ChessPiece.PieceType promotionPiece;
+    private ChessPosition startPosition;
+    private ChessPosition endPosition;
+    private ChessPiece.PieceType promotionPiece;
+
+    public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
+                     ChessPiece.PieceType promotionPiece) {
+        this.startPosition = startPosition;
+        this.endPosition = endPosition;
+        this.promotionPiece = promotionPiece;
+    }
+    public ChessMove(ChessMove original,
+                     ChessPiece.PieceType updatePromotionPiece) {
+        this.startPosition = original.startPosition;
+        this.endPosition = original.endPosition;
+        this.promotionPiece = updatePromotionPiece;
+    }
+
+    /**
+     * @return ChessPosition of starting location
+     */
+    public ChessPosition getStartPosition() {
+
+        return startPosition;
+    }
+
+    /**
+     * @return ChessPosition of ending location
+     */
+    public ChessPosition getEndPosition() {
+        return endPosition;
+    }
 
     @Override
     public String toString() {
@@ -34,27 +62,6 @@ public class ChessMove {
         return Objects.hash(getStartPosition(), getEndPosition(), getPromotionPiece());
     }
 
-    public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
-                     ChessPiece.PieceType promotionPiece) {
-        this.startPosition = startPosition;
-        this.endPosition =  endPosition;
-        this.promotionPiece = promotionPiece;
-    }
-
-    /**
-     * @return ChessPosition of starting location
-     */
-    public ChessPosition getStartPosition() {
-        return startPosition;
-    }
-
-    /**
-     * @return ChessPosition of ending location
-     */
-    public ChessPosition getEndPosition() {
-        return endPosition;
-    }
-
     /**
      * Gets the type of piece to promote a pawn to if pawn promotion is part of this
      * chess move
@@ -62,9 +69,6 @@ public class ChessMove {
      * @return Type of piece to promote a pawn to, or null if no promotion
      */
     public ChessPiece.PieceType getPromotionPiece() {
-        if(promotionPiece != null) {
-            return promotionPiece;
-        }
-        return null;
+        return promotionPiece;
     }
 }

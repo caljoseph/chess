@@ -29,7 +29,7 @@ public class ChessBoard {
                 ChessPiece current_piece = squares[row][col];
                 result.append('|');
                 if (current_piece != null) {
-                    if (current_piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                    if (current_piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
                         switch (current_piece.getPieceType()) {
                             case ChessPiece.PieceType.BISHOP -> result.append('b');
                             case ChessPiece.PieceType.KING -> result.append('k');

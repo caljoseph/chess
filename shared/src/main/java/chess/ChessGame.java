@@ -10,10 +10,11 @@ import java.util.HashSet;
  * signature of the existing methods.
  */
 public class ChessGame {
-    TeamColor turnColor;
-    ChessBoard board = new ChessBoard();
+    private TeamColor turnColor;
+    private ChessBoard board = new ChessBoard();
 
     public ChessGame() {
+        turnColor = TeamColor.WHITE;
     }
 
     /**
@@ -62,7 +63,7 @@ public class ChessGame {
         return validMoves;
     }
 
-    public ChessMove validateMove(ChessPiece currentPiece, ChessMove move) {
+    private ChessMove validateMove(ChessPiece currentPiece, ChessMove move) {
         //must check if this move is gonna put my team into check
         //create a new hypothetical board (copy) and execute this move
         //then loop through whole other team and see if any of the endPosition
@@ -80,10 +81,31 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        ChessPosition startPos = move.getStartPosition();
+        ChessPosition endPos = move.getEndPosition();
+        ChessPiece currentPiece = board.getPiece(startPos);
+        ChessPiece target = board.getPiece(endPos);
 
-        throw new RuntimeException("Not implemented");
+        var validMoves = validMoves(startPos);
+
+        if (!validMoves.contains(move)) {
+            throw new InvalidMoveException("Invalid Move");
+        } else if (currentPiece.getTeamColor() != turnColor){
+            throw new InvalidMoveException("Incorrect Team's Turn");
+        } else {
+            board.addPiece(endPos, currentPiece);
+            board.addPiece(startPos, null);
+            updateTurnColor();
+        }
     }
 
+    private void updateTurnColor() {
+        if (turnColor == TeamColor.WHITE) {
+            turnColor = TeamColor.BLACK;
+        } else {
+            turnColor = TeamColor.WHITE;
+        }
+    }
 
     /**
      * Determines if the given team is in check
@@ -122,7 +144,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        board.resetBoard();
+        this.board = new ChessBoard(board);
     }
 
     /**

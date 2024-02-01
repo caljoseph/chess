@@ -7,11 +7,10 @@ import chess.ChessPosition;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class QueenMovesCalculator implements PieceMovesCalculator {
-    @Override
+public class QueenMovesCalculator implements PieceMovesCalculator{
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        HashSet<ChessMove> bishopMoves = (HashSet<ChessMove>) new BishopMovesCalculator().pieceMoves(board, myPosition);
-        HashSet<ChessMove> rookMoves = (HashSet<ChessMove>) new RookMovesCalculator().pieceMoves(board, myPosition);
+        Collection<ChessMove> bishopMoves = new BishopMovesCalculator().pieceMoves(board,myPosition);
+        Collection<ChessMove> rookMoves = new RookMovesCalculator().pieceMoves(board,myPosition);
         bishopMoves.addAll(rookMoves);
         return bishopMoves;
     }

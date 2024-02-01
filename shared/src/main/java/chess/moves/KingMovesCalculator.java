@@ -1,44 +1,62 @@
 package chess.moves;
 
-import chess.ChessBoard;
-import chess.ChessMove;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class KingMovesCalculator implements PieceMovesCalculator {
+public class KingMovesCalculator implements PieceMovesCalculator{
+    HashSet<ChessPosition> possiblePositions = new HashSet<ChessPosition>();
     HashSet<ChessMove> moves = new HashSet<ChessMove>();
-    @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        ArrayList<ChessPosition> moveOptions = new ArrayList<ChessPosition>();
-        moveOptions.add(new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn()));
-        moveOptions.add(new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1));
-        moveOptions.add(new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1));
-        moveOptions.add(new ChessPosition(myPosition.getRow(), myPosition.getColumn() - 1));
-        moveOptions.add(new ChessPosition(myPosition.getRow(), myPosition.getColumn() + 1));
-        moveOptions.add(new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn()));
-        moveOptions.add(new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1));
-        moveOptions.add(new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1));
+        addPossiblePositions(myPosition);
 
-        for (ChessPosition newPosition : moveOptions) {
-            if(validateMove(board, myPosition, newPosition) != null) {
-                moves.add(validateMove(board, myPosition, newPosition));
+        for (ChessPosition endPos: possiblePositions){
+            if (validateMove(board, myPosition, endPos) != null) {
+                moves.add(validateMove(board, myPosition, endPos));
             }
         }
+
         return moves;
     }
-    ChessMove validateMove(ChessBoard board, ChessPosition myPosition, ChessPosition newPosition) {
-        if(newPosition.getRow() < 1 || newPosition.getRow() > 8
-                || newPosition.getColumn() < 1 || newPosition.getColumn() > 8 ) {
+    public ChessMove validateMove (ChessBoard board, ChessPosition startPos, ChessPosition endPos) {
+        //check if target is on the board -> if not return null
+        if (!onBoard(endPos)) {
             return null;
-        }// Check if the possible move is taking us off the board
-        ChessPiece king = board.getPiece(myPosition);
-        ChessPiece piece = board.getPiece(newPosition);
-        if(piece == null || !piece.getTeamColor().equals(king.getTeamColor())){
-            return new ChessMove(myPosition, newPosition, null);
-        } else return null;
+        }
+        ChessPiece targetSquare = board.getPiece(endPos);
+        //if empty square we go for it
+        if (targetSquare == null) {
+            return new ChessMove(startPos, endPos, null);
+        }
+        ChessGame.TeamColor myTeam = board.getPiece(startPos).getTeamColor();
+        //if enemy we go for it
+        if (targetSquare.getTeamColor() != myTeam){
+            return new ChessMove(startPos, endPos, null);
+        } else {
+            return null;
+        }
+    }
+    public boolean onBoard(ChessPosition position) {
+        if (1 > position.getRow() || 1 > position.getColumn()
+                || 8 < position.getRow() || 8 < position.getColumn()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    void addPossiblePositions (ChessPosition startPos){
+        int startRow = startPos.getRow();
+        int startCol = startPos.getColumn();
+
+        possiblePositions.add(new ChessPosition(startRow + 1, startCol));
+        possiblePositions.add(new ChessPosition(startRow - 1, startCol));
+        possiblePositions.add(new ChessPosition(startRow, startCol + 1));
+        possiblePositions.add(new ChessPosition(startRow, startCol - 1));
+        possiblePositions.add(new ChessPosition(startRow + 1, startCol + 1));
+        possiblePositions.add(new ChessPosition(startRow + 1, startCol - 1));
+        possiblePositions.add(new ChessPosition(startRow - 1, startCol + 1));
+        possiblePositions.add(new ChessPosition(startRow - 1, startCol - 1));
     }
 }

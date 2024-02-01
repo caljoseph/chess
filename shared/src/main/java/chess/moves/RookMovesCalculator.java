@@ -2,84 +2,66 @@ package chess.moves;
 
 import chess.ChessBoard;
 import chess.ChessMove;
+import chess.ChessPiece;
 import chess.ChessPosition;
 
 import java.util.Collection;
 import java.util.HashSet;
 
-public class RookMovesCalculator implements PieceMovesCalculator {
+public class RookMovesCalculator implements PieceMovesCalculator{
     HashSet<ChessMove> moves = new HashSet<ChessMove>();
-    @Override
+    public enum Direction {
+        UP,
+        DOWN,
+        LEFT,
+        RIGHT,
+    }
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        // Implement logic for moves
-        addOrthogonals(board, myPosition, "up");
-        addOrthogonals(board, myPosition, "left");
-        addOrthogonals(board, myPosition, "right");
-        addOrthogonals(board, myPosition, "down");
+        addOrthogonals(board, myPosition, RookMovesCalculator.Direction.UP);
+        addOrthogonals(board, myPosition, RookMovesCalculator.Direction.DOWN);
+        addOrthogonals(board, myPosition, RookMovesCalculator.Direction.LEFT);
+        addOrthogonals(board, myPosition, RookMovesCalculator.Direction.RIGHT);
+
         return moves;
     }
-    void addOrthogonals(ChessBoard board, ChessPosition startPosition, String direction) {
-        ChessPosition currentPosition = startPosition;
-        while (0 < currentPosition.getRow() && currentPosition.getRow() < 8
-                && 0 < currentPosition.getColumn() && currentPosition.getColumn() < 8 ) {
-            if (getNextPosition(currentPosition, direction) == null){
-                //if we are going to fall off of the board, try another direction
-                break;
-            }
-            if (board.getPiece(getNextPosition(currentPosition, direction)) == null){
-                currentPosition = getNextPosition(currentPosition, direction);
-                ChessMove currentMove = new ChessMove(startPosition, currentPosition, null);
-                moves.add(currentMove);
-                //adds empty squares
-            }
-            else if(!board.getPiece(getNextPosition(currentPosition, direction)).getTeamColor().equals(board.getPiece(startPosition).getTeamColor())) {
-                currentPosition = getNextPosition(currentPosition, direction);
-                ChessMove currentMove = new ChessMove(startPosition, currentPosition, null);
-                moves.add(currentMove);
-                break;
-                //stops at capture
-            }
-            else {
-                break;
-                //stops and does not permit move on encounter with teammate
-            }
 
+    void addOrthogonals(ChessBoard board, ChessPosition startPos, RookMovesCalculator.Direction direction){
+        ChessPosition nextPos = getNextPosition(startPos, direction);
+        while (nextPos != null){
+            ChessPiece nextSquare = board.getPiece(nextPos);
+            //what is this square?
+            if (nextSquare == null) {
+                //blank space
+                moves.add(new ChessMove(startPos, nextPos, null));
+                nextPos = getNextPosition(nextPos, direction);
+            }else {
+                if (nextSquare.getTeamColor() != board.getPiece(startPos).getTeamColor()){
+                    //if enemy
+                    moves.add(new ChessMove(startPos, nextPos, null));
+                    break;
+                } else {
+                    break;
+                }
+            }
         }
-    }
-    ChessPosition getNextPosition(ChessPosition currentPosition, String direction) {
+    };
+
+    ChessPosition getNextPosition (ChessPosition startPos, RookMovesCalculator.Direction direction) {
+        int row = startPos.getRow();
+        int col = startPos.getColumn();
         return switch (direction) {
-            case "up" -> getNextPositionUp(currentPosition);
-            case "left" -> getNextPositionLeft(currentPosition);
-            case "right" -> getNextPositionRight(currentPosition);
-            case "down" -> getNextPositionDown(currentPosition);
-            default -> null;
+            case UP -> validatePos(new ChessPosition(row + 1, col));
+            case DOWN -> validatePos(new ChessPosition(row - 1, col));
+            case LEFT -> validatePos(new ChessPosition(row, col + 1));
+            case RIGHT -> validatePos(new ChessPosition(row, col - 1));
         };
     }
-
-    ChessPosition getNextPositionUp(ChessPosition currentPosition) {
-        if(currentPosition.getRow() == 8) {
+    public ChessPosition validatePos(ChessPosition position) {
+        if (1 > position.getRow() || 1 > position.getColumn()
+                || 8 < position.getRow() || 8 < position.getColumn()) {
             return null;
+        } else {
+            return position;
         }
-        return new ChessPosition(currentPosition.getRow() + 1, currentPosition.getColumn());
-    }
-    ChessPosition getNextPositionLeft(ChessPosition currentPosition) {
-        if(currentPosition.getColumn() == 1) {
-            return null;
-        }
-        return new ChessPosition(currentPosition.getRow(), currentPosition.getColumn() - 1);
-    }
-    ChessPosition getNextPositionRight(ChessPosition currentPosition) {
-        if(currentPosition.getColumn() == 8) {
-            return null;
-        }
-        return new ChessPosition(currentPosition.getRow(), currentPosition.getColumn() + 1);
-    }
-    ChessPosition getNextPositionDown(ChessPosition currentPosition) {
-        if(currentPosition.getRow() == 1) {
-            return null;
-        }
-        return new ChessPosition(currentPosition.getRow() - 1, currentPosition.getColumn());
     }
 }
-
-

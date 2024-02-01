@@ -1,83 +1,67 @@
 package chess.moves;
 
-import chess.*;
+import chess.ChessBoard;
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
 
 import java.util.Collection;
 import java.util.HashSet;
 
-public class BishopMovesCalculator implements PieceMovesCalculator {
+public class BishopMovesCalculator implements PieceMovesCalculator{
     HashSet<ChessMove> moves = new HashSet<ChessMove>();
-    @Override
+    public enum Direction {
+        NE,
+        NW,
+        SE,
+        SW
+    }
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        // Implement logic for moves
-        addDiagonals(board, myPosition, "NE");
-        addDiagonals(board, myPosition, "NW");
-        addDiagonals(board, myPosition, "SE");
-        addDiagonals(board, myPosition, "SW");
+        addDiagonals(board, myPosition, Direction.NE);
+        addDiagonals(board, myPosition, Direction.NW);
+        addDiagonals(board, myPosition, Direction.SE);
+        addDiagonals(board, myPosition, Direction.SW);
+
         return moves;
     }
-    void addDiagonals(ChessBoard board, ChessPosition startPosition, String direction) {
-        ChessPosition currentPosition = startPosition;
-        while (0 < currentPosition.getRow() && currentPosition.getRow() < 8
-                && 0 < currentPosition.getColumn() && currentPosition.getColumn() < 8 ) {
-            if (getNextPosition(currentPosition, direction) == null){
-                //if we are going to fall off of the board, try another direction
-                break;
-            }
-            if (board.getPiece(getNextPosition(currentPosition, direction)) == null){
-                currentPosition = getNextPosition(currentPosition, direction);
-                ChessMove currentMove = new ChessMove(startPosition, currentPosition, null);
-                moves.add(currentMove);
-                //adds empty squares
-            }
-            else if(!board.getPiece(getNextPosition(currentPosition, direction)).getTeamColor().equals(board.getPiece(startPosition).getTeamColor())) {
-                currentPosition = getNextPosition(currentPosition, direction);
-                ChessMove currentMove = new ChessMove(startPosition, currentPosition, null);
-                moves.add(currentMove);
-                break;
-                //stops at capture
-            }
-            else {
-                break;
-                //stops and does not permit move on encounter with teammate
-            }
 
+    void addDiagonals(ChessBoard board, ChessPosition startPos, Direction direction){
+        ChessPosition nextPos = getNextPosition(startPos, direction);
+        while (nextPos != null){
+            ChessPiece nextSquare = board.getPiece(nextPos);
+            //what is this square?
+            if (nextSquare == null) {
+                //blank space
+                moves.add(new ChessMove(startPos, nextPos, null));
+                nextPos = getNextPosition(nextPos, direction);
+            }else {
+                if (nextSquare.getTeamColor() != board.getPiece(startPos).getTeamColor()){
+                    //if enemy
+                    moves.add(new ChessMove(startPos, nextPos, null));
+                    break;
+                } else {
+                    break;
+                }
+            }
         }
     }
-    ChessPosition getNextPosition(ChessPosition currentPosition, String direction) {
+
+    ChessPosition getNextPosition (ChessPosition startPos, Direction direction) {
+        int row = startPos.getRow();
+        int col = startPos.getColumn();
         return switch (direction) {
-            case "NE" -> getNextPositionNE(currentPosition);
-            case "NW" -> getNextPositionNW(currentPosition);
-            case "SE" -> getNextPositionSE(currentPosition);
-            case "SW" -> getNextPositionSW(currentPosition);
-            default -> null;
+            case NE -> validatePos(new ChessPosition(row + 1, col + 1));
+            case NW -> validatePos(new ChessPosition(row + 1, col - 1));
+            case SE -> validatePos(new ChessPosition(row - 1, col + 1));
+            case SW -> validatePos(new ChessPosition(row - 1, col - 1));
         };
     }
-
-    ChessPosition getNextPositionNE(ChessPosition currentPosition) {
-        if(currentPosition.getRow() == 8 || currentPosition.getColumn() == 8) {
+    public ChessPosition validatePos(ChessPosition position) {
+        if (1 > position.getRow() || 1 > position.getColumn()
+                || 8 < position.getRow() || 8 < position.getColumn()) {
             return null;
+        } else {
+            return position;
         }
-        return new ChessPosition(currentPosition.getRow() + 1, currentPosition.getColumn() + 1);
-    }
-    ChessPosition getNextPositionNW(ChessPosition currentPosition) {
-        if(currentPosition.getColumn() == 1 || currentPosition.getRow() == 8) {
-            return null;
-        }
-        return new ChessPosition(currentPosition.getRow() + 1, currentPosition.getColumn() - 1);
-    }
-    ChessPosition getNextPositionSE(ChessPosition currentPosition) {
-        if(currentPosition.getColumn() == 8 || currentPosition.getRow() == 1) {
-            return null;
-        }
-        return new ChessPosition(currentPosition.getRow() - 1, currentPosition.getColumn() + 1);
-    }
-    ChessPosition getNextPositionSW(ChessPosition currentPosition) {
-        if(currentPosition.getRow() == 1 || currentPosition.getColumn() == 1) {
-            return null;
-        }
-        return new ChessPosition(currentPosition.getRow() - 1, currentPosition.getColumn() - 1);
     }
 }
-
-

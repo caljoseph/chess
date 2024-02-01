@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -9,6 +10,8 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessGame {
+    TeamColor turnColor;
+    ChessBoard board = new ChessBoard();
 
     public ChessGame() {
     }
@@ -17,7 +20,7 @@ public class ChessGame {
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        throw new RuntimeException("Not implemented");
+        return turnColor;
     }
 
     /**
@@ -26,7 +29,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        throw new RuntimeException("Not implemented");
+        turnColor =  team;
     }
 
     /**
@@ -45,8 +48,30 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        var validMoves = new HashSet<ChessMove>();
+
+        ChessPiece currentPiece = board.getPiece(startPosition);
+        if (currentPiece == null) return validMoves;
+
+        var rawMoves = currentPiece.pieceMoves(board, startPosition);
+        for (ChessMove move: rawMoves) {
+            if (validateMove(currentPiece, move) != null) {
+                validMoves.add(move);
+            }
+        }
+        return validMoves;
     }
+
+    public ChessMove validateMove(ChessPiece currentPiece, ChessMove move) {
+        //must check if this move is gonna put my team into check
+        //create a new hypothetical board (copy) and execute this move
+        //then loop through whole other team and see if any of the endPosition
+        // of entries in their pieceMoves arrays contain my kings coordinates
+        ChessBoard testBoard = new ChessBoard(board);
+
+        return null;
+    }
+
 
     /**
      * Makes a move in a chess game
@@ -55,8 +80,10 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+
         throw new RuntimeException("Not implemented");
     }
+
 
     /**
      * Determines if the given team is in check
@@ -95,7 +122,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+        board.resetBoard();
     }
 
     /**
@@ -104,6 +131,6 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+        return board;
     }
 }

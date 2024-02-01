@@ -20,6 +20,10 @@ public class ChessPiece {
         pieceType = type;
         teamColor = pieceColor;
     }
+    public ChessPiece(ChessPiece o) {
+        pieceType = o.pieceType;
+        teamColor = o.teamColor;
+    }
 
     /**
      * The various different chess piece options
@@ -82,7 +86,7 @@ public class ChessPiece {
             case PAWN -> new PawnMovesCalculator().pieceMoves(board, myPosition);
             case QUEEN -> new QueenMovesCalculator().pieceMoves(board, myPosition);
             case ROOK -> new RookMovesCalculator().pieceMoves(board, myPosition);
-            default -> new HashSet<>();
+            case null -> new HashSet<>();
         };
     }
 }

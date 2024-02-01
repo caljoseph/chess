@@ -64,6 +64,13 @@ public class ChessBoard {
     public ChessBoard(){
 
      }
+    public ChessBoard(ChessBoard o){
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                squares[row][col] = new ChessPiece(o.squares[row][col]);
+            }
+        }
+    }
 
     /**
      * Adds a chess piece to the chessboard
@@ -75,12 +82,6 @@ public class ChessBoard {
         squares[position.getRow() - 1][position.getColumn() - 1] = piece;
     }
 
-
-
-//    public void removePiece(ChessPosition position, ChessPiece piece) {
-////        not sure how confident on this guy I am, what would I do wiht piece?
-//        squares[position.getRow() - 1][position.getColumn() - 1] = null;
-//    }
 
     /**
      * Gets a chess piece on the chessboard

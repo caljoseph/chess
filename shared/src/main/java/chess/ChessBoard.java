@@ -1,6 +1,8 @@
 package chess;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * A chessboard that can hold and rearrange chess pieces.
@@ -62,12 +64,16 @@ public class ChessBoard {
         return result.toString();
     }
     public ChessBoard(){
-
      }
     public ChessBoard(ChessBoard o){
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
-                squares[row][col] = new ChessPiece(o.squares[row][col]);
+                ChessPosition currPosition = new ChessPosition(row + 1, col + 1);
+                if (o.getPiece(currPosition) != null){
+                    ChessPiece currPiece = o.getPiece(currPosition);
+                    squares[row][col] = new ChessPiece(currPiece);
+                }
+
             }
         }
     }
@@ -93,16 +99,41 @@ public class ChessBoard {
     public ChessPiece getPiece(ChessPosition position) {
         return squares[position.getRow() - 1][position.getColumn() - 1];
     }
+
+    public ChessPosition getKingPosition(ChessGame.TeamColor team) {
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (squares[row][col] != null) {
+                    if (squares[row][col].getPieceType() == ChessPiece.PieceType.KING
+                            && squares[row][col].getTeamColor().equals(team)) {
+                        return new ChessPosition(row + 1, col + 1);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public Collection<ChessPosition> getTeam(ChessGame.TeamColor team) {
+        HashSet<ChessPosition> enemyTeam = new HashSet<>();
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (squares[row][col] != null) {
+                    if (squares[row][col].getTeamColor().equals(team)){
+                        enemyTeam.add(new ChessPosition(row + 1, col + 1));
+                    }
+                }
+            }
+        }
+        return enemyTeam;
+    }
+
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
-                squares[row][col] = null;
-            }
-        }
+        squares = new ChessPiece[8][8];
         //Set white
         squares[0][7] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
         squares[0][6] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);

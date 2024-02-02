@@ -26,53 +26,52 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
         }
         return moves;
     }
-    public ChessMove validateMove (ChessBoard board, ChessPosition startPos, ChessPosition endPos) {
-        //check if target is on the board -> if not return null
-        if (!onBoard(endPos)) {
+    public ChessMove validateMove(ChessBoard board, ChessPosition startPos, ChessPosition endPos){
+        if(!onBoard(endPos)){
             return null;
         }
-        ChessPiece targetSquare = board.getPiece(endPos);
-        //rule out double move unless on starting line
+        //if I am not on the starting line and I will move more tan 1 row reject this move
         ChessGame.TeamColor myTeam = board.getPiece(startPos).getTeamColor();
-        int row = startPos.getRow();
-        int col = startPos.getColumn();
+        int myRow = startPos.getRow();
+        int myCol = startPos.getColumn();
         int endRow = endPos.getRow();
-        int endCol = endPos.getColumn();
-        ChessPiece intermediatePiece;
-
-        if (myTeam == ChessGame.TeamColor.WHITE) {
-            if (row != 2 && (Math.abs(row - endRow ) > 1)) {
+        ChessPiece intermediatePiece = null;
+        if (myTeam == ChessGame.TeamColor.WHITE){
+            if (myRow != 2  && (Math.abs(myRow - endRow) > 1)){
                 return null;
             } else {
-                if (board.getPiece(new ChessPosition(3, col)) != null) {return null;}
+                intermediatePiece = board.getPiece(new ChessPosition((myRow + 1), myCol));
             }
-        } else {
-            if (row != 7 && (Math.abs(row - endRow ) > 1)) {
+        } else{
+            if (myRow != 7  && (Math.abs(myRow - endRow) > 1)){
                 return null;
             } else {
-                if (board.getPiece(new ChessPosition(6, col)) != null) {return null;}
+                intermediatePiece = board.getPiece(new ChessPosition((myRow - 1), myCol));
             }
         }
-        if(targetSquare != null) {
-            if (col != endCol){
-                //diagonal
-                if (targetSquare.getTeamColor() != myTeam) {
-                    return new ChessMove(startPos, endPos, null);
-                } else {
-                    return null;
-                }
-            } else {
-                return null;
-            }
-        } else {
-            if (col != endCol){
-                return null;
-            } else {
+
+        ChessPiece endPiece = board.getPiece(endPos);
+        boolean diagonalMove = (startPos.getColumn() != endPos.getColumn());
+        if (endPiece != null) {
+            //when there is a piece blocking
+            boolean isEnemy = (board.getPiece(startPos).getTeamColor() != board.getPiece(endPos).getTeamColor());
+            if (diagonalMove && isEnemy){
                 return new ChessMove(startPos, endPos, null);
+            }else{
+                return null;
+            }
+        } else {
+            //when there is a free space
+            if (diagonalMove){
+                return null;
+            }else{
+                if (intermediatePiece != null) {
+                    return null;
+                } else {
+                    return new ChessMove(startPos, endPos, null);
+                }
             }
         }
-
-
     }
     public boolean onBoard(ChessPosition position) {
         if (1 > position.getRow() || 1 > position.getColumn()

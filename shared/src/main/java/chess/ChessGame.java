@@ -66,11 +66,29 @@ public class ChessGame {
     private ChessMove validateMove(ChessPiece currentPiece, ChessMove move) {
         //must check if this move is gonna put my team into check
         //create a new hypothetical board (copy) and execute this move
-        //then loop through whole other team and see if any of the endPosition
-        // of entries in their pieceMoves arrays contain my kings coordinates
-        ChessBoard testBoard = new ChessBoard(board);
 
-        return null;
+        ChessBoard testBoard = new ChessBoard(board);
+        makeTestMove(testBoard, move);
+
+        //then loop through whole other team and see if any of the endPosition
+        //of entries in their pieceMoves arrays contain my kings coordinates
+
+        ChessPosition myKingPos = testBoard.getKingPosition(currentPiece.getTeamColor());
+        var enemies = testBoard.getTeam(otherTeam(currentPiece.getTeamColor()));
+
+        // get a list of pieceMoves for each one
+        for (ChessPosition enemyPos : enemies) {
+
+            ChessPiece curEnemy = testBoard.getPiece(enemyPos);
+            var curEnemyMoves = curEnemy.pieceMoves(testBoard, enemyPos);
+            //access the endPosition of each entry, compare to my king's coordinates
+            for (ChessMove enemyMove : curEnemyMoves) {
+                if (enemyMove.getEndPosition().equals(myKingPos)) {
+                    return null;
+                }
+            }
+        }
+        return move;
     }
 
 
@@ -86,17 +104,32 @@ public class ChessGame {
         ChessPiece currentPiece = board.getPiece(startPos);
         ChessPiece target = board.getPiece(endPos);
 
-        var validMoves = validMoves(startPos);
-
-        if (!validMoves.contains(move)) {
-            throw new InvalidMoveException("Invalid Move");
-        } else if (currentPiece.getTeamColor() != turnColor){
+        if (currentPiece.getTeamColor() != turnColor) {
             throw new InvalidMoveException("Incorrect Team's Turn");
-        } else {
-            board.addPiece(endPos, currentPiece);
-            board.addPiece(startPos, null);
-            updateTurnColor();
         }
+
+        var validMoves = validMoves(startPos);
+        if (validMoves.contains(move)){
+            if (move.getPromotionPiece() != null) {
+                board.addPiece(endPos, new ChessPiece(currentPiece.getTeamColor(), move.getPromotionPiece()));
+                board.addPiece(startPos, null);
+                updateTurnColor();
+            } else {
+                board.addPiece(endPos, currentPiece);
+                board.addPiece(startPos, null);
+                updateTurnColor();
+            }
+        } else {
+            throw new InvalidMoveException("Invalid Move");
+        }
+    }
+    private void makeTestMove(ChessBoard testBoard, ChessMove move) {
+        ChessPosition startPos = move.getStartPosition();
+        ChessPosition endPos = move.getEndPosition();
+        ChessPiece currentPiece = testBoard.getPiece(startPos);
+
+        testBoard.addPiece(endPos, currentPiece);
+        testBoard.addPiece(startPos, null);
     }
 
     private void updateTurnColor() {
@@ -107,6 +140,14 @@ public class ChessGame {
         }
     }
 
+    private TeamColor otherTeam(TeamColor team) {
+        if (team == TeamColor.WHITE) {
+            return TeamColor.BLACK;
+        } else {
+            return TeamColor.WHITE;
+        }
+    }
+
     /**
      * Determines if the given team is in check
      *
@@ -114,7 +155,21 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessPosition myKingPos = board.getKingPosition(teamColor);
+        var enemies = board.getTeam(otherTeam(teamColor));
+
+        // get a list of pieceMoves for each one
+        for (ChessPosition enemyPos : enemies) {
+            ChessPiece curEnemy = board.getPiece(enemyPos);
+            var curEnemyMoves = curEnemy.pieceMoves(board, enemyPos);
+            //access the endPosition of each entry, compare to my king's coordinates
+            for (ChessMove enemyMove : curEnemyMoves) {
+                if (enemyMove.getEndPosition().equals(myKingPos)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -124,7 +179,11 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (isInCheck(teamColor) && (turnColor == teamColor)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -135,7 +194,17 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+
+        var myTeam = board.getTeam(teamColor);
+
+        // get a list of pieceMoves for each one
+        for (ChessPosition piece : myTeam) {
+            var curMoves = validMoves(piece);
+            if(!curMoves.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

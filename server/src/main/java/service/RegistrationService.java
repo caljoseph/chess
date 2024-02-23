@@ -27,7 +27,7 @@ public class RegistrationService extends Service {
         // let's get them an authToken
         var authDAO = Server.getAuthDAO();
         var auth = generateAuth();
-        authDAO.createAuth(auth, newUser.username());
+        auth = authDAO.createAuth(auth, newUser.username());
 
         return new RegisterResponse(newUser.username(), auth);
     }

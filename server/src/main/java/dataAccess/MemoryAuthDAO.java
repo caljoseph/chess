@@ -10,16 +10,18 @@ public class MemoryAuthDAO implements AuthDAO{
         memory.clear();
         return true;
     }
-    public void createAuth(String authToken, String username){
+    public String createAuth(String authToken, String username){
         var newAuth = new AuthData(authToken, username);
         memory.add(newAuth);
+        return authToken;
     }
     public AuthData getAuth(String authToken){
-        //TODO implement
         return null;
     }
+
     public void deleteAuth(String authToken) throws DataAccessException{
         //TODO implement
         // I need to find a way to delete all authTokens associated with this user on logout
     }
+
 }

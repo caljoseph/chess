@@ -22,4 +22,8 @@ public class MemoryUserDAO implements UserDAO {
         }
         return null;
     }
+    public boolean verifyUser(String username, String password) {
+        UserData found = getUser(username);
+        return found != null && found.password().equals(password);
+    }
 }

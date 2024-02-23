@@ -16,9 +16,8 @@ public class RegisterHandler extends Handler {
 
         if (result instanceof FailureResponse){
             setStatus(res, (FailureResponse) result);
-        } else {
-            res.status(200);
-        }
+        } else { res.status(200); }
+
         return serializer.toJson(result);
     }
 }

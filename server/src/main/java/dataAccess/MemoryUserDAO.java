@@ -11,11 +11,15 @@ public class MemoryUserDAO implements UserDAO {
         memory.clear();
         return true;
     }
-    public void createUser(UserData user) throws DataAccessException {
-        //TODO Implement
+    public void createUser(UserData user) {
+        memory.add(user);
     }
     public UserData getUser(String username) {
-        //TODO Implement
-        return new UserData(null,null,null);
+        for (UserData user : memory) {
+            if (user.username().equals(username)){
+                return user;
+            }
+        }
+        return null;
     }
 }

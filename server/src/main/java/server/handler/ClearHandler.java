@@ -7,7 +7,7 @@ import service.UtilityService;
 import spark.Request;
 import spark.Response;
 
-public class ClearHandler {
+public class ClearHandler extends Handler {
     public static Object handleRequest(Request req, Response res) {
 
         if (UtilityService.clear()) {
@@ -16,7 +16,7 @@ public class ClearHandler {
         } else {
             res.status(500);
             var serializer = new Gson();
-            var fail = new FailureResponse("message", "Error: description");
+            var fail = new FailureResponse( "Error: description");
             return serializer.toJson(fail);
         }
     }

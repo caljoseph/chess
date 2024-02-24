@@ -5,6 +5,14 @@ import chess.ChessGame;
 import java.util.Objects;
 
 public record GameData(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game) {
+    public GameData(GameData original, String newWhiteUsername, String newBlackUsername) {
+        this(original.gameID(), newWhiteUsername, newBlackUsername, original.gameName(), original.game());
+    }
+    @Override
+    public int gameID() {
+        return gameID;
+    }
+
     @Override
     public String toString() {
         return "GameData{" +

@@ -4,6 +4,8 @@ import model.AuthData;
 import model.GameData;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 
 public class MemoryGameDAO implements GameDAO {
@@ -12,17 +14,30 @@ public class MemoryGameDAO implements GameDAO {
         memory.clear();
         return true;
     }
-    public void createGame(String gameId, String gameData){
-
+    public void createGame(GameData gameData){
+        memory.add(gameData);
     }
     public GameData getGame(String gameId){
-        //TODO implement
-        return new GameData(1, null, null, null, null);
+        for (GameData game : memory) {
+            if (String.valueOf(game.gameID()).equals(gameId)) {
+                return game;
+            }
+        }
+        return null;
     }
     public ArrayList<GameData> listGames(){
-        return new ArrayList<GameData>();
+        return memory;
     }
     public void updateGame(String gameId, GameData updatedGameData){
+        Iterator<GameData> iterator = memory.iterator();
 
+        while (iterator.hasNext()) {
+            GameData game = iterator.next();
+            if (String.valueOf(game.gameID()).equals(gameId)) {
+                iterator.remove();
+                memory.add(updatedGameData);
+                break;
+            }
+        }
     }
 }

@@ -1,6 +1,7 @@
 package server.handler;
 
 import model.FailureResponse;
+import service.UtilityService;
 import spark.Request;
 import spark.Response;
 
@@ -9,8 +10,7 @@ public class Handler {
         return "Base class";
     }
     public static boolean authenticate(String authToken){
-        //TODO implement authentication right here
-        return true;
+        return UtilityService.authenticate(authToken);
     }
     public static void setStatus(Response res, FailureResponse fail){
         String message = fail.message;

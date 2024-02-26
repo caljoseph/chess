@@ -19,23 +19,27 @@ public class KingMovesCalculator implements PieceMovesCalculator{
 
         return moves;
     }
-    public ChessMove validateMove (ChessBoard board, ChessPosition startPos, ChessPosition endPos) {
-        //check if target is on the board -> if not return null
+    public ChessMove validateMove(ChessBoard board, ChessPosition startPos, ChessPosition endPos) {
+        // Check if target is on the board, if not return null
         if (!onBoard(endPos)) {
             return null;
         }
+
         ChessPiece targetSquare = board.getPiece(endPos);
-        //if empty square we go for it
-        if (targetSquare == null) {
-            return new ChessMove(startPos, endPos, null);
-        }
-        ChessGame.TeamColor myTeam = board.getPiece(startPos).getTeamColor();
-        //if enemy we go for it
-        if (targetSquare.getTeamColor() != myTeam){
+
+        // If the square is empty or has an enemy piece, make the move
+        if (isSquareEmptyOrEnemy(targetSquare, board.getPiece(startPos))) {
             return new ChessMove(startPos, endPos, null);
         } else {
             return null;
         }
+    }
+
+    private boolean isSquareEmptyOrEnemy(ChessPiece targetSquare, ChessPiece startPiece) {
+        ChessGame.TeamColor myTeam = startPiece.getTeamColor();
+
+        // If the square is empty or has an enemy piece, return true; otherwise, return false
+        return targetSquare == null || targetSquare.getTeamColor() != myTeam;
     }
     public boolean onBoard(ChessPosition position) {
         if (1 > position.getRow() || 1 > position.getColumn()

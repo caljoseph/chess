@@ -28,11 +28,11 @@ public class ChessBoard {
         StringBuilder result = new StringBuilder();
         for (int row = 7; row >= 0; row--) {
             for (int col = 0; col < 8; col++) {
-                ChessPiece current_piece = squares[row][col];
+                ChessPiece currentPiece = squares[row][col];
                 result.append('|');
-                if (current_piece != null) {
-                    if (current_piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
-                        switch (current_piece.getPieceType()) {
+                if (currentPiece != null) {
+                    if (currentPiece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+                        switch (currentPiece.getPieceType()) {
                             case ChessPiece.PieceType.BISHOP -> result.append('b');
                             case ChessPiece.PieceType.KING -> result.append('k');
                             case ChessPiece.PieceType.KNIGHT -> result.append('n');
@@ -42,7 +42,7 @@ public class ChessBoard {
                         }
                     }
                     else {
-                        switch (current_piece.getPieceType()) {
+                        switch (currentPiece.getPieceType()) {
                             case ChessPiece.PieceType.BISHOP -> result.append('B');
                             case ChessPiece.PieceType.KING -> result.append('K');
                             case ChessPiece.PieceType.KNIGHT -> result.append('N');

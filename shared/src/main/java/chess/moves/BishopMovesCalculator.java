@@ -25,25 +25,31 @@ public class BishopMovesCalculator implements PieceMovesCalculator{
         return moves;
     }
 
-    void addDiagonals(ChessBoard board, ChessPosition startPos, Direction direction){
+    void addDiagonals(ChessBoard board, ChessPosition startPos, Direction direction) {
         ChessPosition nextPos = getNextPosition(startPos, direction);
-        while (nextPos != null){
+
+        while (nextPos != null) {
             ChessPiece nextSquare = board.getPiece(nextPos);
-            //what is this square?
+
             if (nextSquare == null) {
-                //blank space
+                // Blank space, add move and continue
                 moves.add(new ChessMove(startPos, nextPos, null));
                 nextPos = getNextPosition(nextPos, direction);
-            }else {
-                if (nextSquare.getTeamColor() != board.getPiece(startPos).getTeamColor()){
-                    //if enemy
+            } else {
+                if (isEnemyPiece(nextSquare, board.getPiece(startPos))) {
+                    // Enemy piece, add move and break
                     moves.add(new ChessMove(startPos, nextPos, null));
                     break;
                 } else {
+                    // Same team piece, break
                     break;
                 }
             }
         }
+    }
+
+    private boolean isEnemyPiece(ChessPiece piece1, ChessPiece piece2) {
+        return piece1.getTeamColor() != piece2.getTeamColor();
     }
 
     ChessPosition getNextPosition (ChessPosition startPos, Direction direction) {

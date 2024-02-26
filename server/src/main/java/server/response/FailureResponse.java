@@ -7,7 +7,4 @@ public class FailureResponse implements Response {
         this.message = error;
     }
 
-    public String getMessage() {
-        return message;
-    }
 }

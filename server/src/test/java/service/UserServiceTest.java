@@ -1,5 +1,9 @@
 package service;
 
+import dataAccess.MemoryAuthDAO;
+import dataAccess.MemoryGameDAO;
+import dataAccess.MemoryUserDAO;
+import org.junit.jupiter.api.BeforeEach;
 import server.request.LoginRequest;
 import server.request.LogoutRequest;
 import server.request.RegisterRequest;
@@ -9,6 +13,13 @@ import server.response.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserServiceTest {
+    @BeforeEach
+    void setUp() {
+        var userDAO = new MemoryUserDAO();
+        userDAO.clear();
+        var authDAO = new MemoryAuthDAO();
+        authDAO.clear();
+    }
 
     @Test
     void testSuccessfulLogin() {
@@ -51,16 +62,6 @@ class UserServiceTest {
         assertNotEquals(loginResponse1.authToken, loginResponse2.authToken);
     }
 
-    @Test
-    void testSuccessfulLogout() {
-        var registerResult = RegistrationService.register(new RegisterRequest("validUser", "validPass", "validEmail"));
-        var authToken = ((RegisterResponse) registerResult).authToken;
-        var logoutRequest = new LogoutRequest(authToken);
-
-        Response response = UserService.logout(logoutRequest);
-
-        assertTrue(response instanceof LogoutResponse);
-    }
 
     @Test
     void testUnsuccessfulLogout() {

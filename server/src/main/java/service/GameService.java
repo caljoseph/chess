@@ -39,43 +39,34 @@ public class GameService {
             return new FailureResponse("Error: bad request");
         }
 
-        // Check if this gameID really exists
         var game = gameDAO.getGame(request.gameID());
-        if (game == null) {
+        var authTokenInfo = authDAO.getAuth(authToken);
+        var username = authTokenInfo.userName();
+
+        // Check fields
+        if (game == null || authTokenInfo == null || username == null) {
             return new FailureResponse("Error: bad request");
         }
 
-        var username = authDAO.getAuth(authToken).userName();
-
-        // adds username to the game associated with the gameID
+        // Watcher
         if (request.playerColor() == null) {
             var newGameData = new GameData(game, game.whiteUsername(), game.blackUsername());
             gameDAO.updateGame(request.gameID(), newGameData);
             return new JoinGameResponse();
-        } else if (request.playerColor().equals("BLACK")) {
-            if (game.blackUsername() != null) {
-                return new FailureResponse("Error: already taken");
-            }
-
-            var newGameData = new GameData(game, game.whiteUsername(), username);
-            gameDAO.updateGame(request.gameID(), newGameData);
-            return new JoinGameResponse();
-        } else if (request.playerColor().equals("WHITE")) {
-            if (game.blackUsername() != null) {
-                return new FailureResponse("Error: already taken");
-            }
-            var newGameData = new GameData(game, username, game.blackUsername());
-            gameDAO.updateGame(request.gameID(), newGameData);
-            return new JoinGameResponse();
-        } else {
-            return new FailureResponse("Error: bad request");
         }
 
+        // Spot taken
+        if ((request.playerColor().equals("BLACK") && game.blackUsername() != null) ||
+                (request.playerColor().equals("WHITE") && game.whiteUsername() != null)) {
+            return new FailureResponse("Error: already taken");
+        }
 
+        // Successful join
+        var newGameData = new GameData(game,
+                "WHITE".equals(request.playerColor()) ? username : game.whiteUsername(),
+                "BLACK".equals(request.playerColor()) ? username : game.blackUsername());
 
-
-
-
-
+        gameDAO.updateGame(request.gameID(), newGameData);
+        return new JoinGameResponse();
     }
 }

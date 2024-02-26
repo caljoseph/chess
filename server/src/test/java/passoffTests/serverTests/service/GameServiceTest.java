@@ -30,7 +30,6 @@ public class GameServiceTest {
         Assertions.assertEquals("Error: bad request", failureResponse.message);
     }
 
-    // Add more test cases as needed
 
 }
 

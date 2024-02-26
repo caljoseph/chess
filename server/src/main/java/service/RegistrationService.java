@@ -1,10 +1,10 @@
 package service;
 
 import model.*;
-import model.request.RegisterRequest;
-import model.response.FailureResponse;
-import model.response.RegisterResponse;
-import model.response.Response;
+import server.request.RegisterRequest;
+import server.response.FailureResponse;
+import server.response.RegisterResponse;
+import server.response.Response;
 
 public class RegistrationService extends Service {
 

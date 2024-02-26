@@ -3,15 +3,12 @@ package service;
 import dataAccess.MemoryAuthDAO;
 import dataAccess.MemoryGameDAO;
 import model.*;
-import model.request.*;
-import model.response.*;
-import service.RegistrationService;
+import server.request.*;
+import server.response.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.Server;
-import service.GameService;
-import service.UserService;
 
 import java.util.List;
 

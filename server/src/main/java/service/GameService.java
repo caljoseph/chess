@@ -1,9 +1,9 @@
 package service;
 
 import model.*;
-import model.request.GameRequest;
-import model.request.JoinGameRequest;
-import model.response.*;
+import server.request.GameRequest;
+import server.request.JoinGameRequest;
+import server.response.*;
 
 public class GameService extends Service {
     private static int numGames = 1;

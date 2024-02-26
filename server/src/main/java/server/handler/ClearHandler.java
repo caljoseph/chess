@@ -2,7 +2,7 @@ package server.handler;
 
 
 import com.google.gson.Gson;
-import model.response.FailureResponse;
+import server.response.FailureResponse;
 import service.UtilityService;
 import spark.Request;
 import spark.Response;

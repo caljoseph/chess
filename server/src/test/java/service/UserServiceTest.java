@@ -1,12 +1,10 @@
 package service;
 
-import model.request.LoginRequest;
-import model.request.LogoutRequest;
-import model.request.RegisterRequest;
-import model.response.*;
+import server.request.LoginRequest;
+import server.request.LogoutRequest;
+import server.request.RegisterRequest;
 import org.junit.jupiter.api.Test;
-import service.RegistrationService;
-import service.UserService;
+import server.response.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 

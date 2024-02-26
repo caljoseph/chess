@@ -1,8 +1,8 @@
 package server.handler;
 
 import com.google.gson.Gson;
-import model.response.FailureResponse;
-import model.request.GameRequest;
+import server.response.FailureResponse;
+import server.request.GameRequest;
 import service.GameService;
 import spark.Request;
 import spark.Response;

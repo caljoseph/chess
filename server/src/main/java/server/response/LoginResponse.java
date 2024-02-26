@@ -1,10 +1,10 @@
-package model.response;
+package server.response;
 
-public class RegisterResponse implements Response {
+public class LoginResponse implements Response {
     public final String username;
     public final String authToken;
 
-    public RegisterResponse(String username, String authToken) {
+    public LoginResponse(String username, String authToken) {
         this.username = username;
         this.authToken = authToken;
     }

@@ -1,4 +1,4 @@
-package model.request;
+package server.request;
 
 public record LogoutRequest (String authorization) {
 }

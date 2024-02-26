@@ -1,10 +1,9 @@
 package passoffTests.serverTests.service;
 
-import dataAccess.MemoryUserDAO;
-import model.FailureResponse;
-import model.RegisterRequest;
-import model.RegisterResponse;
-import model.Response;
+import model.response.FailureResponse;
+import model.request.RegisterRequest;
+import model.response.RegisterResponse;
+import model.response.Response;
 import org.junit.jupiter.api.Test;
 import service.RegistrationService;
 

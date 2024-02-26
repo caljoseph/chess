@@ -1,6 +1,9 @@
 package passoffTests.serverTests.service;
 
-import model.*;
+import model.request.LoginRequest;
+import model.request.LogoutRequest;
+import model.request.RegisterRequest;
+import model.response.*;
 import org.junit.jupiter.api.Test;
 import service.RegistrationService;
 import service.UserService;
@@ -49,5 +52,31 @@ class UserServiceTest {
         assertEquals("repeatUser", loginResponse2.username);
         assertNotEquals(loginResponse1.authToken, loginResponse2.authToken);
     }
+
+    @Test
+    void testSuccessfulLogout() {
+        var registerResult = RegistrationService.register(new RegisterRequest("validUser", "validPass", "validEmail"));
+        var authToken = ((RegisterResponse) registerResult).authToken;
+        var logoutRequest = new LogoutRequest(authToken);
+
+        Response response = UserService.logout(logoutRequest);
+
+        assertTrue(response instanceof LogoutResponse);
+    }
+
+    @Test
+    void testUnsuccessfulLogout() {
+        var registerResult = RegistrationService.register(new RegisterRequest("validUser", "validPass", "validEmail"));
+        var authToken = "invalidAuthToken";
+        var logoutRequest = new LogoutRequest(authToken);
+
+        Response response = UserService.logout(logoutRequest);
+
+        assertTrue(response instanceof FailureResponse, "Response should be an instance of FailureResponse");
+        assertEquals("Error: unauthorized", ((FailureResponse) response).getMessage(), "Failure message should match");
+
+    }
+
+
 }
 

@@ -1,8 +1,8 @@
 package server.handler;
 
 import com.google.gson.Gson;
-import model.FailureResponse;
-import model.LoginRequest;
+import model.response.FailureResponse;
+import model.request.LoginRequest;
 import service.UserService;
 import spark.Request;
 import spark.Response;

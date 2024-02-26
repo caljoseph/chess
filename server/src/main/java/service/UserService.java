@@ -1,8 +1,11 @@
 package service;
 
-import dataAccess.DataAccessException;
-import model.*;
-import server.Server;
+import model.request.LoginRequest;
+import model.request.LogoutRequest;
+import model.response.FailureResponse;
+import model.response.LoginResponse;
+import model.response.LogoutResponse;
+import model.response.Response;
 
 public class UserService extends Service{
     public static Response login(LoginRequest request) {
@@ -19,7 +22,7 @@ public class UserService extends Service{
     }
 
     public static Response logout(LogoutRequest request) {
-        var authToken = request.Authorization();
+        var authToken = request.authorization();
 
             if (authDAO.deleteAuth(authToken)) {
                 return new LogoutResponse();

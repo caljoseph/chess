@@ -1,10 +1,9 @@
 package service;
 
-import chess.ChessGame;
-import dataAccess.MemoryAuthDAO;
-import dataAccess.MemoryGameDAO;
 import model.*;
-import server.Server;
+import model.request.GameRequest;
+import model.request.JoinGameRequest;
+import model.response.*;
 
 public class GameService extends Service {
     private static int numGames = 1;

@@ -1,6 +1,6 @@
 package server.handler;
 
-import model.FailureResponse;
+import model.response.FailureResponse;
 import service.UtilityService;
 import spark.Request;
 import spark.Response;

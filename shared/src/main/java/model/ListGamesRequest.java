@@ -1,4 +1,4 @@
 package model;
 
-public record ListGamesRequest(String Authorization) {
+public record ListGamesRequest(String authorization) {
 }

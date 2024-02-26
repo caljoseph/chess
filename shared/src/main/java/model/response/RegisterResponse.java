@@ -1,4 +1,4 @@
-package model;
+package model.response;
 
 public class RegisterResponse implements Response {
     public final String username;

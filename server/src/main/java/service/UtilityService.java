@@ -14,12 +14,10 @@ public class UtilityService extends Service{
         }
     }
     public static boolean clear() {
-        var auth = Server.getAuthDAO();
-        var game = Server.getGameDAO();
-        var user = Server.getUserDAO();
-        if (auth.clear() &&
-            game.clear() &&
-            user.clear()) {
+
+        if (authDAO.clear() &&
+            gameDAO.clear() &&
+            userDAO.clear()) {
             return true;
         }
         else {

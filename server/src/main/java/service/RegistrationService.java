@@ -1,9 +1,10 @@
 package service;
 
-import dataAccess.MemoryAuthDAO;
-import dataAccess.MemoryUserDAO;
 import model.*;
-import server.Server;
+import model.request.RegisterRequest;
+import model.response.FailureResponse;
+import model.response.RegisterResponse;
+import model.response.Response;
 
 public class RegistrationService extends Service {
 

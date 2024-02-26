@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class MemoryAuthDAO implements AuthDAO{
-    public static ArrayList<AuthData> memory = new ArrayList<>();
+    private static ArrayList<AuthData> memory = new ArrayList<>();
 
     public boolean clear() {
         memory.clear();
@@ -31,18 +31,9 @@ public class MemoryAuthDAO implements AuthDAO{
         var auth = getAuth(authToken);
         if (auth == null) { return false; }
 
-        // if it does, extract the username and delete all AuthData objects that match
-        deleteUserAuth(auth.userName());
+        // only remove that single authToken!!!! For some reason????
+        memory.remove(auth);
         return true;
-    }
-    public void deleteUserAuth(String username) {
-        Iterator<AuthData> iterator = memory.iterator();
-        while (iterator.hasNext()) {
-            AuthData auth = iterator.next();
-            if (auth.userName().equals(username)) {
-                iterator.remove();
-            }
-        }
     }
 
 }

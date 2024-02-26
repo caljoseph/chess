@@ -9,7 +9,7 @@ import java.util.Iterator;
 
 
 public class MemoryGameDAO implements GameDAO {
-    public static ArrayList<GameData> memory = new ArrayList<>();
+    private static ArrayList<GameData> memory = new ArrayList<>();
     public boolean clear() {
         memory.clear();
         return true;

@@ -1,4 +1,4 @@
-package passoffTests.serverTests.service;
+package service;
 
 import model.request.LoginRequest;
 import model.request.LogoutRequest;

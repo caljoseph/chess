@@ -1,4 +1,4 @@
-package passoffTests.serverTests.service;
+package service;
 
 import model.response.FailureResponse;
 import model.request.RegisterRequest;

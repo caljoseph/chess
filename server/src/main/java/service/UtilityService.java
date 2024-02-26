@@ -5,10 +5,9 @@ import dataAccess.MemoryGameDAO;
 import dataAccess.MemoryUserDAO;
 import server.Server;
 
-public class UtilityService {
+public class UtilityService extends Service{
     public static boolean authenticate(String authToken) {
-        var auth = Server.getAuthDAO();
-        if (auth.getAuth(authToken) != null) {
+        if (authDAO.getAuth(authToken) != null) {
             return true;
         } else {
             return false;

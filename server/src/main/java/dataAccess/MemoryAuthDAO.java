@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class MemoryAuthDAO implements AuthDAO{
-    private static ArrayList<AuthData> memory = new ArrayList<>();
+    public static ArrayList<AuthData> memory = new ArrayList<>();
+
     public boolean clear() {
         memory.clear();
         return true;
@@ -25,7 +26,7 @@ public class MemoryAuthDAO implements AuthDAO{
         return null;
     }
 
-    public boolean deleteAuth(String authToken) throws DataAccessException{
+    public boolean deleteAuth(String authToken){
         // check if this authToken exists somewhere
         var auth = getAuth(authToken);
         if (auth == null) { return false; }

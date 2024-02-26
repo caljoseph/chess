@@ -15,7 +15,6 @@ public class RegistrationService extends Service {
         }
 
         // Let's check if this user is taken
-        var userDAO = Server.getUserDAO();
         if (userDAO.getUser(request.username()) != null) {
             return new FailureResponse("Error: already taken");
         }
@@ -25,7 +24,6 @@ public class RegistrationService extends Service {
         userDAO.createUser(newUser);
 
         // let's get them an authToken
-        var authDAO = Server.getAuthDAO();
         var auth = generateAuth();
         auth = authDAO.createAuth(auth, newUser.username());
 

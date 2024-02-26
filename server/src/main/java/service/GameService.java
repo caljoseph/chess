@@ -6,10 +6,9 @@ import dataAccess.MemoryGameDAO;
 import model.*;
 import server.Server;
 
-public class GameService {
+public class GameService extends Service {
     private static int numGames = 1;
-    private static MemoryGameDAO gameDAO = Server.getGameDAO();
-    private static MemoryAuthDAO authDAO = Server.getAuthDAO();
+
 
     public static Response create(GameRequest request) {
         if (!isValid(request)) {

@@ -11,9 +11,10 @@ public class KnightMovesCalculator implements PieceMovesCalculator{
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         addPossiblePositions(myPosition);
 
-        for (ChessPosition endPos: possiblePositions){
-            if (validateMove(board, myPosition, endPos) != null) {
-                moves.add(validateMove(board, myPosition, endPos));
+        for (ChessPosition endPos : possiblePositions) {
+            ChessMove validatedMove = validateMove(board, myPosition, endPos);
+            if (validatedMove != null) {
+                moves.add(validatedMove);
             }
         }
 

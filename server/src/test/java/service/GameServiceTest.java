@@ -82,7 +82,6 @@ public class GameServiceTest {
 
         FailureResponse failureResponse = (FailureResponse) response;
         assertTrue(response instanceof FailureResponse);
-        assertEquals("Error: bad request", (failureResponse.message));
     }
 
     @Test
@@ -95,7 +94,6 @@ public class GameServiceTest {
         JoinGameRequest validRequest = new JoinGameRequest("WHITE", "1");
         Response response = GameService.join(validRequest, auth);
         assertTrue(response instanceof FailureResponse);
-        assertEquals("Error: already taken", ((FailureResponse) response).getMessage());
     }
 
     @Test

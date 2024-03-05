@@ -22,11 +22,11 @@ public class RegistrationService extends Service {
         }
 
         // encode password
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        var password = encoder.encode(request.password());
+//        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+//        var password = encoder.encode(request.password());
 
         // new user, lets add them
-        var newUser = new UserData(request.username(), password, request.email());
+        var newUser = new UserData(request.username(), request.password(), request.email());
         userDAO.createUser(newUser);
 
         // let's get them an authToken

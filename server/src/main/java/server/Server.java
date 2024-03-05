@@ -1,5 +1,8 @@
 package server;
 
+import dataAccess.db.DBAuthDAO;
+import dataAccess.db.DBGameDAO;
+import dataAccess.db.DBUserDAO;
 import dataAccess.memory.MemoryAuthDAO;
 import dataAccess.memory.MemoryGameDAO;
 import dataAccess.memory.MemoryUserDAO;
@@ -7,9 +10,9 @@ import server.handler.*;
 import spark.*;
 
 public class Server {
-    static MemoryUserDAO userDAO = new MemoryUserDAO();
-    static MemoryAuthDAO authDAO = new MemoryAuthDAO();
-    static MemoryGameDAO gameDAO = new MemoryGameDAO();
+    static DBUserDAO userDAO = new DBUserDAO();
+    static DBAuthDAO authDAO = new DBAuthDAO();
+    static DBGameDAO gameDAO = new DBGameDAO();
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -42,13 +45,13 @@ public class Server {
         Spark.stop();
         Spark.awaitStop();
     }
-    public static MemoryUserDAO getUserDAO(){
+    public static DBUserDAO getUserDAO(){
         return userDAO;
     }
-    public static MemoryGameDAO getGameDAO(){
+    public static DBGameDAO getGameDAO(){
         return gameDAO;
     }
-    public static MemoryAuthDAO getAuthDAO(){
+    public static DBAuthDAO getAuthDAO(){
         return authDAO;
     }
 }

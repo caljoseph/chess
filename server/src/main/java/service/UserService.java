@@ -15,8 +15,8 @@ public class UserService extends Service{
         var username = request.username();
         var password = request.password();
 
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        password = encoder.encode(password);
+//        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+//        password = encoder.encode(password);
 
         // check credentials
         if(!userDAO.verifyUser(username, password)){

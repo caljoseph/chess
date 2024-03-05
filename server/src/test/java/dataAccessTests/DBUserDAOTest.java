@@ -1,4 +1,4 @@
-package dataAccess;
+package dataAccessTests;
 import dataAccess.db.DBUserDAO;
 import model.GameData;
 import model.UserData;

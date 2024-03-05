@@ -1,5 +1,8 @@
 package service;
 
+import dataAccess.db.DBAuthDAO;
+import dataAccess.db.DBGameDAO;
+import dataAccess.db.DBUserDAO;
 import dataAccess.memory.MemoryAuthDAO;
 import dataAccess.memory.MemoryGameDAO;
 import model.*;
@@ -16,9 +19,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GameServiceTest {
-    MemoryGameDAO gameDAO = Server.getGameDAO();
-    MemoryAuthDAO authDAO = Server.getAuthDAO();
+    DBGameDAO gameDAO = Server.getGameDAO();
+    DBAuthDAO authDAO = Server.getAuthDAO();
+    DBUserDAO userDAO = Server.getUserDAO();
     String auth = "auth";
+    @BeforeEach
+    void setup() {
+        gameDAO.clear();
+    }
     @Test
     void testCreateValidGame() {
         GameRequest validRequest = new GameRequest("ChessGame");
@@ -41,10 +49,12 @@ public class GameServiceTest {
 
     @BeforeEach
     void setUp() {
-        gameDAO = new MemoryGameDAO();
+        gameDAO = new DBGameDAO();
         gameDAO.clear();
-        authDAO = new MemoryAuthDAO();
+        authDAO = new DBAuthDAO();
         authDAO.clear();
+        userDAO = new DBUserDAO();
+        userDAO.clear();
     }
 
     @Test

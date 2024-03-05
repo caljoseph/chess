@@ -1,5 +1,7 @@
 package service;
 
+import dataAccess.db.DBAuthDAO;
+import dataAccess.db.DBUserDAO;
 import dataAccess.memory.MemoryAuthDAO;
 import dataAccess.memory.MemoryUserDAO;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,12 +16,16 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserServiceTest {
     @BeforeEach
     void setUp() {
-        var userDAO = new MemoryUserDAO();
+        var userDAO = new DBUserDAO();
         userDAO.clear();
-        var authDAO = new MemoryAuthDAO();
+        var authDAO = new DBAuthDAO();
         authDAO.clear();
     }
-
+    @Test
+    void clearHouse (){
+        var userDAO = new MemoryUserDAO();
+        userDAO.clear();
+    }
     @Test
     void testSuccessfulLogin() {
         RegistrationService.register(new RegisterRequest("validUser", "validPassword", ""));

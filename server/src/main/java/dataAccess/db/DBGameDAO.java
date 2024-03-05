@@ -16,9 +16,21 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 public class DBGameDAO extends DBDAO implements GameDAO {
 
     public boolean clear() {
-        String sql = "DELETE FROM game_data;";
+        String sqlDelete = "DELETE FROM game_data;";
+        String sqlResetAutoIncrement = "ALTER TABLE game_data AUTO_INCREMENT = 1;";
 
-        return clearTable(sql);
+        return clearTable(sqlDelete) && resetAutoIncrement(sqlResetAutoIncrement);
+    }
+
+    private boolean resetAutoIncrement(String sql) {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(sql)) {
+                preparedStatement.executeUpdate();
+            }
+            return true;
+        } catch (DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
     public String createGame(GameData gameData) {
         String sql = "insert into game_data (white_username, black_username, game_name, game) values (?, ?, ?, ?)";

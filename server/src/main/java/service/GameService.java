@@ -1,23 +1,23 @@
 package service;
 
+import chess.ChessGame;
 import model.*;
 import server.request.GameRequest;
 import server.request.JoinGameRequest;
 import server.response.*;
 
 public class GameService extends Service {
-    private static int numGames = 1;
+
 
 
     public static Response create(GameRequest request) {
         if (!isValid(request)) {
             return new FailureResponse("Error: bad request");
         }
-        // gives it gameID equivalent to the total number of games added
-        var newGame = new GameData(numGames, null,null, request.gameName(), null);
-        numGames++;
-        gameDAO.createGame(newGame);
-        return new GameResponse(String.valueOf(newGame.gameID()));
+
+        var newGame = new GameData(0, null,null, request.gameName(), new ChessGame());
+
+        return new GameResponse(String.valueOf(gameDAO.createGame(newGame)));
     }
     public static Response listGames() {
         return new ListGamesResponse(gameDAO.listGames());

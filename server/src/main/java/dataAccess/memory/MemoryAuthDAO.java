@@ -1,11 +1,12 @@
-package dataAccess;
+package dataAccess.memory;
 
+import dataAccess.AuthDAO;
 import model.AuthData;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class MemoryAuthDAO implements AuthDAO{
+public class MemoryAuthDAO implements AuthDAO {
     private static ArrayList<AuthData> memory = new ArrayList<>();
 
     public boolean clear() {

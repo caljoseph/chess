@@ -1,13 +1,12 @@
 package service;
 
-import dataAccess.MemoryAuthDAO;
-import dataAccess.MemoryGameDAO;
-import dataAccess.MemoryUserDAO;
+import dataAccess.memory.MemoryAuthDAO;
+import dataAccess.memory.MemoryGameDAO;
+import dataAccess.memory.MemoryUserDAO;
 import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.Test;
 import server.Server;
-import service.UtilityService;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

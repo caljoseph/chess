@@ -1,10 +1,5 @@
 package service;
 
-import dataAccess.MemoryAuthDAO;
-import dataAccess.MemoryGameDAO;
-import dataAccess.MemoryUserDAO;
-import server.Server;
-
 public class UtilityService extends Service{
     public static boolean authenticate(String authToken) {
         if (authDAO.getAuth(authToken) != null) {

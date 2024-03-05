@@ -1,6 +1,7 @@
 package service;
 
 import model.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import server.request.RegisterRequest;
 import server.response.FailureResponse;
 import server.response.RegisterResponse;
@@ -20,8 +21,12 @@ public class RegistrationService extends Service {
             return new FailureResponse("Error: already taken");
         }
 
+        // encode password
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        var password = encoder.encode(request.password());
+
         // new user, lets add them
-        var newUser = new UserData(request.username(), request.password(), request.email());
+        var newUser = new UserData(request.username(), password, request.email());
         userDAO.createUser(newUser);
 
         // let's get them an authToken

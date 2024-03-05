@@ -1,5 +1,6 @@
-package dataAccess;
+package dataAccess.memory;
 
+import dataAccess.GameDAO;
 import model.AuthData;
 import model.GameData;
 
@@ -14,8 +15,9 @@ public class MemoryGameDAO implements GameDAO {
         memory.clear();
         return true;
     }
-    public void createGame(GameData gameData){
+    public String createGame(GameData gameData){
         memory.add(gameData);
+        return "";
     }
     public GameData getGame(String gameId){
         for (GameData game : memory) {

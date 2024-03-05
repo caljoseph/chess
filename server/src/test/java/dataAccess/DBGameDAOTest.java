@@ -71,6 +71,30 @@ public class DBGameDAOTest {
     void emptyListGames() {
       assertTrue(gameDAO.listGames().isEmpty());
     }
+    @Test
+    void successfulUpdate() {
+        var game = new ChessGame();
+        var game_data = new GameData(1,null, null, "gameName", game);
+        var id = gameDAO.createGame(game_data);
+
+        var new_game_data = new GameData(Integer.parseInt(id), "I joined!", null, "gameName", game);
+        gameDAO.updateGame(id, new_game_data);
+
+        assertEquals(new_game_data, gameDAO.getGame(id));
+    }
+    @Test
+    void unsuccessfulUpdate() {
+        var game = new ChessGame();
+        var game_data = new GameData(1,null, null, "gameName", game);
+        var id = gameDAO.createGame(game_data);
+
+        var new_game_data = new GameData(Integer.parseInt(id), "I joined!", null, "gameName", game);
+        gameDAO.updateGame(String.valueOf(Integer.parseInt(id) * 2), new_game_data);
+
+        assertNotEquals(new_game_data, gameDAO.getGame(id));
+    }
+
+
 
 
 }

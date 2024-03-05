@@ -20,9 +20,6 @@ public class DBGameDAO extends DBDAO implements GameDAO {
 
         return clearTable(sql);
     }
-
-
-
     public String createGame(GameData gameData) {
         String sql = "insert into game_data (white_username, black_username, game_name, game) values (?, ?, ?, ?)";
 
@@ -54,7 +51,6 @@ public class DBGameDAO extends DBDAO implements GameDAO {
             throw new RuntimeException(e);
         }
     }
-
     public GameData getGame(String gameId){
         String sql = "select * from game_data where game_id = ?";
         try (var conn = DatabaseManager.getConnection()) {
@@ -113,6 +109,23 @@ public class DBGameDAO extends DBDAO implements GameDAO {
         return gamesList;
     }
     public void updateGame(String gameId, GameData updatedGameData){
+        String sql = "UPDATE game_data SET white_username = ?, black_username = ?, game_name = ?, game = ? WHERE game_id = ?";
+
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(sql, RETURN_GENERATED_KEYS)) {
+                Gson gson = new Gson();
+
+                preparedStatement.setString(1, updatedGameData.whiteUsername());
+                preparedStatement.setString(2, updatedGameData.blackUsername());
+                preparedStatement.setString(3, updatedGameData.gameName());
+                preparedStatement.setString(4, gson.toJson(updatedGameData.game()));
+                preparedStatement.setString(5, gameId);
+
+                preparedStatement.executeUpdate();
+            }
+        } catch (DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 

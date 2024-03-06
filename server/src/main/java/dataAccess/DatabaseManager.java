@@ -8,6 +8,33 @@ public class DatabaseManager {
     private static final String user;
     private static final String password;
     private static final String connectionUrl;
+    private static final String sql_auth = """
+        CREATE TABLE IF NOT EXISTS `auth` (
+          `authToken` varchar(255) NOT NULL,
+          `username` varchar(255) NOT NULL,
+          PRIMARY KEY (`authToken`),
+          KEY `userName` (`username`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+        """;
+    private static final String sql_users = """
+        CREATE TABLE IF NOT EXISTS `users` (
+          `username` varchar(255) NOT NULL,
+          `password` varchar(255) NOT NULL,
+          `email` varchar(255) NOT NULL,
+          PRIMARY KEY (`username`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+        """;
+    private static final String sql_game_data = """
+        CREATE TABLE IF NOT EXISTS `game_data` (
+          `game_id` bigint unsigned NOT NULL AUTO_INCREMENT,
+          `white_username` varchar(255) DEFAULT NULL,
+          `black_username` varchar(255) DEFAULT NULL,
+          `game_name` varchar(255) NOT NULL,
+          `game` varchar(2000) NOT NULL,
+          PRIMARY KEY (`game_id`),
+          UNIQUE KEY `game_id` (`game_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+        """;
 
     /*
      * Load the database information for the db.properties file.
@@ -34,11 +61,29 @@ public class DatabaseManager {
     /**
      * Creates the database if it does not already exist.
      */
-    static void createDatabase() throws DataAccessException {
+    public static void createDatabase() throws DataAccessException {
         try {
             var statement = "CREATE DATABASE IF NOT EXISTS " + databaseName;
             var conn = DriverManager.getConnection(connectionUrl, user, password);
             try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.executeUpdate();
+            }
+            createTables();
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+    }
+    public static void createTables() throws DataAccessException {
+        createTable(sql_auth);
+        createTable(sql_users);
+        createTable(sql_game_data);
+    }
+
+    private static void createTable(String sql) throws DataAccessException {
+        try {
+            var conn = DriverManager.getConnection(connectionUrl, user, password);
+            conn.setCatalog(databaseName);
+            try (var preparedStatement = conn.prepareStatement(sql)) {
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {

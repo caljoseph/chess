@@ -1,5 +1,7 @@
 package server;
 
+import dataAccess.DataAccessException;
+import dataAccess.DatabaseManager;
 import dataAccess.db.DBAuthDAO;
 import dataAccess.db.DBGameDAO;
 import dataAccess.db.DBUserDAO;
@@ -18,6 +20,8 @@ public class Server {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
+
+        createDatabase();
 
         // Register your endpoints and handle exceptions here.
         Spark.init();
@@ -44,6 +48,14 @@ public class Server {
     public void stop() {
         Spark.stop();
         Spark.awaitStop();
+    }
+    public static void createDatabase(){
+        try {
+            DatabaseManager.createDatabase();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+
     }
     public static DBUserDAO getUserDAO(){
         return userDAO;

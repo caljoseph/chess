@@ -21,6 +21,13 @@ public class DBUserDAOTest {
     }
 
     @Test
+    void testClear(){
+        var newUser = new UserData("newUN", "newPW", "newEM");
+        userDAO.createUser(newUser);
+        userDAO.clear();
+        assertNull(userDAO.getUser("newUN"));
+    }
+    @Test
     void successfulAddAndGetUser() {
         var newUser = new UserData("newUN", "newPW", "newEM");
         userDAO.createUser(newUser);

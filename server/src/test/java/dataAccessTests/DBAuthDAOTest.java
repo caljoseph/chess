@@ -22,6 +22,12 @@ public class DBAuthDAOTest {
     }
 
     @Test
+    void testClear() {
+        var auth = authDAO.createAuth("my auth token", "my username");
+        authDAO.clear();
+        assertNull(authDAO.getAuth(auth));
+    }
+    @Test
     void successfulAdd() {
        var auth = authDAO.createAuth("my auth token", "my username");
        assertEquals(auth, authDAO.getAuth(auth).authToken());

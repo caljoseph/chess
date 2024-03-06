@@ -22,9 +22,23 @@ public class DBGameDAOTest {
     void config() {
         gameDAO.clear();
     }
+    @Test
+    void testClear(){
+        var game = new ChessGame();
+        var game_data = new GameData(1,null, null, "gameName", game);
+        gameDAO.createGame(game_data);
+        gameDAO.clear();
+        assertNull(gameDAO.getGame(String.valueOf(game_data.gameID())));
+    }
 
     @Test
     void successfulAdd() {
+        var game = new ChessGame();
+        var game_data = new GameData(1,null, null, "gameName", game);
+        assert gameDAO.createGame(game_data) instanceof String;
+    }
+    @Test
+    void unsuccessfulAdd() {
         var game = new ChessGame();
         var game_data = new GameData(1,null, null, "gameName", game);
         assert gameDAO.createGame(game_data) instanceof String;

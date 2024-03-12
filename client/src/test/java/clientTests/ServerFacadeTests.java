@@ -15,6 +15,7 @@ public class ServerFacadeTests {
 
     private static Server server;
     private static final String SERVER_URL = "http://localhost";
+
     private static final String GAME_NAME = "TestGame";
     private static final String GAME_ID = "123";
 
@@ -23,7 +24,7 @@ public class ServerFacadeTests {
         server = new Server();
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
-        ServerFacade serverFacade = new ServerFacade(SERVER_URL, String.valueOf(port));
+        ServerFacade serverFacade = new ServerFacade(SERVER_URL + String.valueOf(port));
     }
     @BeforeEach
     public void prep() {

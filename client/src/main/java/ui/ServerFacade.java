@@ -15,12 +15,9 @@ import java.net.URL;
 
 public class ServerFacade {
     private static String serverUrl;
-    private static String serverPort;
 
-
-    public ServerFacade(String url, String port) {
+    public ServerFacade(String url) {
         serverUrl = url;
-        serverPort = port;
     }
     public static RegisterResponse register(String username, String password, String email) throws ResponseException {
         var request = new RegisterRequest(username, password, email);
@@ -59,7 +56,7 @@ public class ServerFacade {
 
     private static <T> T makeRequest(String method, String path, Object request, String auth, Class<T> responseClass) throws ResponseException {
         try {
-            URL url = (new URI(serverUrl + ":" + serverPort + path)).toURL();
+            URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);

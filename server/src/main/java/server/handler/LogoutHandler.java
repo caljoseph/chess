@@ -11,8 +11,14 @@ public class LogoutHandler extends Handler {
     public static Object handleRequest(Request req, Response res) {
         var serializer = new Gson();
 
-        var request = new LogoutRequest(req.headers("authorization"));
-        var result = UserService.logout(request);
+        var authToken = req.headers("Authorization");
+
+        if (!authenticate(authToken)) {
+            var result = new FailureResponse("Error: unauthorized");
+            setStatus(res, (FailureResponse) result);
+            return serializer.toJson(result);
+        }
+        var result = UserService.logout(authToken);
 
         if (result instanceof FailureResponse){
             setStatus(res, (FailureResponse) result);

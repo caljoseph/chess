@@ -72,9 +72,9 @@ class UserServiceTest {
     void testUnsuccessfulLogout() {
         var registerResult = RegistrationService.register(new RegisterRequest("validUser", "validPass", "validEmail"));
         var authToken = "invalidAuthToken";
-        var logoutRequest = new LogoutRequest(authToken);
+        var logoutRequest = new LogoutRequest();
 
-        Response response = UserService.logout(logoutRequest);
+        Response response = UserService.logout(authToken);
 
         assertTrue(response instanceof FailureResponse, "Response should be an instance of FailureResponse");
 

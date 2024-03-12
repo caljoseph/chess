@@ -27,6 +27,8 @@ public class Server {
         Spark.init();
         Spark.delete("/db", (req, res) ->
                 (ClearHandler.handleRequest(req, res)));
+        Spark.delete("/db", (req, res) ->
+                (ClearHandler.handleRequest(req, res)));
         Spark.post("/user", (req, res) ->
                 (RegisterHandler.handleRequest(req, res)));
         Spark.post("/session", (req, res) ->

@@ -26,8 +26,7 @@ public class UserService extends Service{
         return new LoginResponse(username, authToken);
     }
 
-    public static Response logout(LogoutRequest request) {
-        var authToken = request.authorization();
+    public static Response logout(String authToken) {
 
             if (authDAO.deleteAuth(authToken)) {
                 return new LogoutResponse();

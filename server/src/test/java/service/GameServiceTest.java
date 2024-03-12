@@ -131,7 +131,7 @@ public class GameServiceTest {
 
         var joinResult = GameService.join(new JoinGameRequest("WHITE", "1"), registerAuth);
 
-        var logoutResult = UserService.logout(new LogoutRequest(loginAuth));
+        var logoutResult = UserService.logout(loginAuth);
 
     }
     //make some test cases here to see what happens when I log in, logout etc then join a game.

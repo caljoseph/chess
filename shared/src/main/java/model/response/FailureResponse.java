@@ -1,4 +1,4 @@
-package server.response;
+package model.response;
 
 public class FailureResponse implements Response {
     public final String message;

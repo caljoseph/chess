@@ -1,4 +1,4 @@
-package server.response;
+package model.response;
 
 public class LoginResponse implements Response {
     public final String username;

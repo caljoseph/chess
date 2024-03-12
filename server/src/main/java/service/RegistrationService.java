@@ -1,11 +1,10 @@
 package service;
 
 import model.*;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import server.request.RegisterRequest;
-import server.response.FailureResponse;
-import server.response.RegisterResponse;
-import server.response.Response;
+import model.request.RegisterRequest;
+import model.response.FailureResponse;
+import model.response.RegisterResponse;
+import model.response.Response;
 
 public class RegistrationService extends Service {
 

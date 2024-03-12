@@ -2,14 +2,16 @@ package service;
 
 import dataAccess.db.DBAuthDAO;
 import dataAccess.db.DBUserDAO;
-import dataAccess.memory.MemoryAuthDAO;
 import dataAccess.memory.MemoryUserDAO;
+import model.response.FailureResponse;
+import model.response.LoginResponse;
+import model.response.Response;
 import org.junit.jupiter.api.BeforeEach;
-import server.request.LoginRequest;
-import server.request.LogoutRequest;
-import server.request.RegisterRequest;
+import model.request.LoginRequest;
+import model.request.LogoutRequest;
+import model.request.RegisterRequest;
 import org.junit.jupiter.api.Test;
-import server.response.*;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 

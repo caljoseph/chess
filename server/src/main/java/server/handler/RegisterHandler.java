@@ -1,8 +1,8 @@
 package server.handler;
 
 import com.google.gson.Gson;
-import server.response.FailureResponse;
-import server.request.RegisterRequest;
+import model.response.FailureResponse;
+import model.request.RegisterRequest;
 import service.RegistrationService;
 import spark.Request;
 import spark.Response;

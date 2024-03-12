@@ -1,12 +1,11 @@
 package service;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import server.request.LoginRequest;
-import server.request.LogoutRequest;
-import server.response.FailureResponse;
-import server.response.LoginResponse;
-import server.response.LogoutResponse;
-import server.response.Response;
+import model.request.LoginRequest;
+import model.request.LogoutRequest;
+import model.response.FailureResponse;
+import model.response.LoginResponse;
+import model.response.LogoutResponse;
+import model.response.Response;
 
 public class UserService extends Service{
 

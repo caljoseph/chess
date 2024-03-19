@@ -5,7 +5,7 @@ import ui.ServerFacade;
 public class Main {
     public static void main(String[] args) {
         System.out.println("Enter desired server:");
-        var serverUrl = "http://localhost";
+        var serverUrl = "http://localhost:8080";
         if (args.length == 1) {
             serverUrl = args[0];
         }

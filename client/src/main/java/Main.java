@@ -1,6 +1,7 @@
 import chess.*;
 import ui.Repl;
 import ui.ServerFacade;
+import ui.Gameplay;
 
 public class Main {
     public static void main(String[] args) {
@@ -9,6 +10,7 @@ public class Main {
         if (args.length == 1) {
             serverUrl = args[0];
         }
+
         new Repl(new ServerFacade(serverUrl)).run();
 
     }

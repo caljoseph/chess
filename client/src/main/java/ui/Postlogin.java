@@ -49,6 +49,7 @@ public class Postlogin {
                 case "quit":
                     System.out.println("bye");
                     quit = true;
+                    // this should maybe log me out?
                     break;
                 case "help":
                     System.out.println(HELP);
@@ -64,14 +65,22 @@ public class Postlogin {
                     list(auth);
                     break;
                 case "join":
-                    if (tokens.length == 3) {
-                        join(tokens[1], tokens[2]);
-                    } else {
+                    if (tokens.length != 3) {
                         System.out.println("Invalid number of arguments for create game");
+                    }
+                    else if (!isInteger(tokens[1]) || (!tokens[2].equals("WHITE") && !tokens[2].equals("BLACK"))) {
+                        System.out.println("Invalid syntax, use: \u001B[0;35mjoin \u001B[0;34m<ID> [WHITE|BLACK|<empty>]\u001B[0m to join a game");
+                    } else {
+                        join(tokens[1], tokens[2]);
+                        new Gameplay(serverFacade, username).run();
                     }
                     break;
                 case "observe":
-                    System.out.println("To implement");
+                    if (tokens.length != 2) {
+                        System.out.println("Invalid number of arguments for observe");
+                    } else {
+                        new Gameplay(serverFacade, username).run();
+                    }
                     break;
                 case "logout":
                     logout(auth);
@@ -129,6 +138,14 @@ public class Postlogin {
     private void printCorrespondingPairs() {
         for (Map.Entry<Integer, Integer> entry : gameList.entrySet()) {
             System.out.println("Display ID: " + entry.getKey() + ", True ID: " + entry.getValue());
+        }
+    }
+    private static boolean isInteger(String s) {
+        try {
+            Integer.parseInt(s);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
         }
     }
 }

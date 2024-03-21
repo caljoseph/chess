@@ -41,9 +41,6 @@ public class Gameplay {
 
     private void drawBoard(boolean rightSideUp) {
 
-
-
-
         String[] topLetters = {"h", "g", "f", "e", "d", "c", "b", "a"};
         String[] sideNumbers = {"8", "7", "6", "5", "4", "3", "2", "1"};
         String[] edge = {"R", "N", "B", "K", "Q", "B", "N", "R"};

@@ -64,7 +64,9 @@ public class Prelogin {
 
             new Postlogin(serverFacade, username, auth).run();
         } catch (ResponseException e) {
-            System.out.println("Login failed: " + e);
+
+                System.out.println("Login failed: " + e);
+
         }
     }
 
@@ -75,7 +77,11 @@ public class Prelogin {
 
             new Postlogin(serverFacade, username, auth).run();
         } catch (ResponseException e) {
-            System.out.println("Registration failed: " + e);
+            if (e.getMessage().equals("failure: 403")) {
+                System.out.println("Username taken");
+            } else {
+                System.out.println("Registration failed: " + e);
+            }
         }
     }
 }

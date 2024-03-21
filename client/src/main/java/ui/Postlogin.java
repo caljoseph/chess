@@ -82,8 +82,9 @@ public class Postlogin {
                         System.out.println("Invalid number of arguments for observe");
                     } else {
 
-                        // contact server with null color
-                        new Gameplay(serverFacade, username).run();
+                        if (join(tokens[1], null)) {
+                            new Gameplay(serverFacade, username).run();
+                        }
                     }
                     break;
                 case "logout":
@@ -110,7 +111,10 @@ public class Postlogin {
             var res = serverFacade.listGames(auth);
             numGames = 1;
             for (GameData game : res.games()) {
-                System.out.println(numGames + ": " + game.gameName() + " " + game.whiteUsername() + " " + game.blackUsername());
+                String whiteUsername = (game.whiteUsername() != null ? game.whiteUsername() : "EMPTY");
+                String blackUsername = (game.blackUsername() != null ? game.blackUsername() : "EMPTY");
+
+                System.out.println("\u001B[0m" + numGames + ": " + game.gameName() + " - \u001B[0;35mWhite: \u001B[0;34m" + whiteUsername + " \u001B[0;35mBlack: \u001B[0;34m" + blackUsername);
                 gameList.put(numGames, game.gameID());
                 numGames += 1;
             }

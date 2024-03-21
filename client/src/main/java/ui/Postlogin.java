@@ -71,8 +71,9 @@ public class Postlogin {
                     else if (!isInteger(tokens[1]) || (!tokens[2].equals("WHITE") && !tokens[2].equals("BLACK"))) {
                         System.out.println("Invalid syntax, use: \u001B[0;35mjoin \u001B[0;34m<ID> [WHITE|BLACK|<empty>]\u001B[0m to join a game");
                     } else {
-                        join(tokens[1], tokens[2]);
-                        new Gameplay(serverFacade, username).run();
+                        if (join(tokens[1], tokens[2])) {
+                            new Gameplay(serverFacade, username).run();
+                        }
                     }
                     break;
                 case "observe":
@@ -114,16 +115,19 @@ public class Postlogin {
             System.out.println("List games failed: " + e);
         }
     }
-    void join(String gameID, String playerColor) {
+    boolean join(String gameID, String playerColor) {
         try {
             var joinedGame = serverFacade.joinGame(auth, playerColor, String.valueOf(gameList.get(Integer.valueOf(gameID))));
             System.out.println("joined game " + gameID);
+            return true;
 
         } catch (ResponseException e) {
             if (e.getMessage().equals("failure: 403")) {
                 System.out.println("The spot is already taken.");
+                return false;
             } else {
                 System.out.println("Join game failed with message " + e.getMessage());
+                return false;
             }
         }
     }

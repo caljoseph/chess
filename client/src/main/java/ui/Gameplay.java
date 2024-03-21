@@ -27,12 +27,12 @@ public class Gameplay {
 
             switch (tokens[0]) {
                 case "quit":
-                    System.out.println("bye");
+                    System.out.println("\u001B[0mbye");
                     quit = true;
                     // this should maybe log me out?
                     break;
                 default:
-                    System.out.println("invalid input");
+                    System.out.println("\u001B[0minvalid input");
                     break;
             }
         }

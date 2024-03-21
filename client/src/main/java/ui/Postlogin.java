@@ -65,6 +65,7 @@ public class Postlogin {
                     list(auth);
                     break;
                 case "join":
+                    // if i'm already in the game as that color, start the game
                     if (tokens.length != 3) {
                         System.out.println("Invalid number of arguments for create game");
                     }
@@ -80,6 +81,8 @@ public class Postlogin {
                     if (tokens.length != 2) {
                         System.out.println("Invalid number of arguments for observe");
                     } else {
+
+                        // contact server with null color
                         new Gameplay(serverFacade, username).run();
                     }
                     break;
@@ -107,7 +110,7 @@ public class Postlogin {
             var res = serverFacade.listGames(auth);
             numGames = 1;
             for (GameData game : res.games()) {
-                System.out.println(numGames + ": " + game.gameName());
+                System.out.println(numGames + ": " + game.gameName() + " " + game.whiteUsername() + " " + game.blackUsername());
                 gameList.put(numGames, game.gameID());
                 numGames += 1;
             }

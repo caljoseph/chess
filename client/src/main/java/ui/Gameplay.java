@@ -11,7 +11,6 @@ public class Gameplay {
         this.username = username;
     }
     public void run() {
-        System.out.println("Let's draw you a game board honey");
         Scanner scanner = new Scanner(System.in);
         boolean quit = false;
 
@@ -41,9 +40,13 @@ public class Gameplay {
 
 
     private void drawBoard(boolean rightSideUp) {
+
+
+
+
         String[] topLetters = {"h", "g", "f", "e", "d", "c", "b", "a"};
         String[] sideNumbers = {"8", "7", "6", "5", "4", "3", "2", "1"};
-        String[] edge = {"R", "N", "B", "Q", "K", "B", "N", "R"};
+        String[] edge = {"R", "N", "B", "K", "Q", "B", "N", "R"};
 
         int start = rightSideUp ? 8 : 1;
         int end = rightSideUp ? 1 : 8;
@@ -65,10 +68,13 @@ public class Gameplay {
 
         for (int i = start; rightSideUp ? i >= end : i <= end; i += step) {
             System.out.print("\u001b[30;47;1m " + sideNumbers[i - 1] + " ");
+            if ( !rightSideUp ) {
+                edge = new String[]{"R", "N", "B", "Q", "K", "B", "N", "R"};
+            }
 
             for (int j = 0; j < 8; j++) {
                 String piece = edge[j];
-                boolean isWhitePiece = (i + j) % 2 == 0;
+                boolean isWhitePiece = rightSideUp ? (i + j) % 2 == 0 : (i + j + 1) % 2 == 0;
                 boolean isFirstRow = i == 8;
                 boolean isSecondRow = i == 7;
                 boolean isSeventhRow = i == 2;

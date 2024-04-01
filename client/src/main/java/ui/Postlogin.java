@@ -3,17 +3,16 @@ package ui;
 import model.GameData;
 import ui.exception.ResponseException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
+
 import ui.EscapeSequences;
 
 public class Postlogin {
     private ServerFacade serverFacade;
-    private String username;
+    private final String username;
     private String auth;
     private HashMap<Integer, Integer> gameList = new HashMap<>();
+    private ArrayList<GameData> gameDataList = new ArrayList<>();
     // maps display ID to true ID
     private int numGames = 0;
     private final String HELP = """
@@ -37,9 +36,12 @@ public class Postlogin {
     }
     public void run() {
         System.out.println("Logged in as " + username);
+        System.out.println("\u001B[32mGames:\u001B[0m");
 
         Scanner scanner = new Scanner(System.in);
         boolean quit = false;
+
+        list(auth);
 
         while (!quit) {
             System.out.print("\u001B[32m[LOGGED IN]\u001B[0m  >>> "); // Print prompt in green
@@ -66,7 +68,6 @@ public class Postlogin {
                     list(auth);
                     break;
                 case "join":
-                    // if i'm already in the game as that color, start the game
                     if (tokens.length != 3) {
                         System.out.println("Invalid number of arguments for create game");
                     }
@@ -112,11 +113,16 @@ public class Postlogin {
             var res = serverFacade.listGames(auth);
             numGames = 1;
             for (GameData game : res.games()) {
+
                 String whiteUsername = (game.whiteUsername() != null ? game.whiteUsername() : "EMPTY");
                 String blackUsername = (game.blackUsername() != null ? game.blackUsername() : "EMPTY");
 
                 System.out.println("\u001B[0m" + numGames + ": " + game.gameName() + " - \u001B[0;35mWhite: \u001B[0;34m" + whiteUsername + " \u001B[0;35mBlack: \u001B[0;34m" + blackUsername);
                 gameList.put(numGames, game.gameID());
+
+                var gameData = new GameData(numGames, whiteUsername, blackUsername, game.gameName(), null);
+                gameDataList.add(gameData);
+
                 numGames += 1;
             }
         } catch (ResponseException e) {
@@ -125,6 +131,15 @@ public class Postlogin {
     }
     boolean join(String gameID, String playerColor) {
         try {
+            // I just need to check if, for this gameID, my username matches the username of either of the colors in the game, and if so I should return true without telling the server
+            for (GameData game : gameDataList) {
+                if (game.gameID() != Integer.valueOf(gameID)) { continue; }
+                if (game.whiteUsername().equals(username) && playerColor.equals("WHITE") ||
+                        game.blackUsername().equals(username) && playerColor.equals("BLACK")) {
+                    System.out.println("joined game " + gameID);
+                    return true;
+                }
+            }
             var joinedGame = serverFacade.joinGame(auth, playerColor, String.valueOf(gameList.get(Integer.valueOf(gameID))));
             System.out.println("joined game " + gameID);
             return true;
@@ -142,7 +157,6 @@ public class Postlogin {
     void create(String gameName) {
         try {
             var newGame = serverFacade.createGame(auth, gameName);
-            System.out.println("Created game with true ID: " + newGame.gameID());
             list(auth);
         } catch (ResponseException e) {
             System.out.println("Create game failed: " + e);

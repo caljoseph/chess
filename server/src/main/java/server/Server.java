@@ -23,10 +23,10 @@ public class Server {
 
         createDatabase();
 
+        setupWebSocket();
+
         // Register your endpoints and handle exceptions here.
         Spark.init();
-        Spark.delete("/db", (req, res) ->
-                (ClearHandler.handleRequest(req, res)));
         Spark.delete("/db", (req, res) ->
                 (ClearHandler.handleRequest(req, res)));
         Spark.post("/user", (req, res) ->
@@ -67,5 +67,10 @@ public class Server {
     }
     public static DBAuthDAO getAuthDAO(){
         return authDAO;
+    }
+
+    private void setupWebSocket() {
+        Spark.webSocket("/connect", WebSocketHandler.class);
+        Spark.init();
     }
 }

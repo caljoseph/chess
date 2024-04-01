@@ -74,19 +74,14 @@ public class Postlogin {
                     else if (!isInteger(tokens[1]) || (!tokens[2].equals("WHITE") && !tokens[2].equals("BLACK"))) {
                         System.out.println("Invalid syntax, use: \u001B[0;35mjoin \u001B[0;34m<ID> [WHITE|BLACK|<empty>]\u001B[0m to join a game");
                     } else {
-                        if (join(tokens[1], tokens[2])) {
-                            new Gameplay(serverFacade, username).run();
-                        }
+                        join(tokens[1], tokens[2]);
                     }
                     break;
                 case "observe":
                     if (tokens.length != 2) {
                         System.out.println("Invalid number of arguments for observe");
                     } else {
-
-                        if (join(tokens[1], null)) {
-                            new Gameplay(serverFacade, username).run();
-                        }
+                        join(tokens[1], null);
                     }
                     break;
                 case "logout":
@@ -131,7 +126,6 @@ public class Postlogin {
     }
     boolean join(String gameID, String playerColor) {
         try {
-            // I just need to check if, for this gameID, my username matches the username of either of the colors in the game, and if so I should return true without telling the server
             for (GameData game : gameDataList) {
                 if (game.gameID() != Integer.valueOf(gameID)) { continue; }
                 if (game.whiteUsername().equals(username) && playerColor.equals("WHITE") ||
@@ -139,14 +133,23 @@ public class Postlogin {
                     System.out.println("joined game " + gameID);
                     return true;
                 }
+                if (game.whiteUsername().equals(username) && playerColor.equals("BLACK") ||
+                        game.blackUsername().equals(username) && playerColor.equals("WHITE")){
+                    throw new ResponseException(1000, "You already joined this game as the other color.");
+                }
             }
-            var joinedGame = serverFacade.joinGame(auth, playerColor, String.valueOf(gameList.get(Integer.valueOf(gameID))));
-            System.out.println("joined game " + gameID);
+
+            serverFacade.joinGame(auth, playerColor, String.valueOf(gameList.get(Integer.valueOf(gameID))));
+            WebSocketFacade ws = serverFacade.initiateWebSocket();
+            new Gameplay(serverFacade, ws, username, playerColor, gameID).run();
             return true;
 
         } catch (ResponseException e) {
             if (e.getMessage().equals("failure: 403")) {
                 System.out.println("The spot is already taken.");
+                return false;
+            } else if (e.getMessage().equals("You already joined this game as the other color.")) {
+                System.out.println(e.getMessage());
                 return false;
             } else {
                 System.out.println("Join game failed with message " + e.getMessage());

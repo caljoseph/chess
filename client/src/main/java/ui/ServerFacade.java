@@ -13,6 +13,8 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 
+// I need to create another class called websocketfacade and have this class call it to initiate websocket stuff
+
 public class ServerFacade {
     private static String serverUrl;
 
@@ -54,6 +56,9 @@ public class ServerFacade {
         return makeRequest("PUT", path, request, auth, JoinGameResponse.class);
     }
 
+    public WebSocketFacade initiateWebSocket() throws ResponseException {
+        return new WebSocketFacade(serverUrl);
+    }
     private static <T> T makeRequest(String method, String path, Object request, String auth, Class<T> responseClass) throws ResponseException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
@@ -107,8 +112,6 @@ public class ServerFacade {
     private static boolean isSuccessful(int status) {
         return status / 100 == 2;
     }
-
-
 
 
 

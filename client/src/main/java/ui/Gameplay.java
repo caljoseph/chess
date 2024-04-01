@@ -5,26 +5,34 @@ import java.util.Scanner;
 
 public class Gameplay {
     private ServerFacade serverFacade;
+    private WebSocketFacade webSocketFacade;
     private final String username;
+    private final String gameID;
+    private final String playerColor;
+
     private final String HELP = """
-            \u001B[0;35mredraw chess board \u001B[0;34m<NAME>\u001B[0m- to create a game
-            \u001B[0;35mmark move \u001B[0;34m<ID> [WHITE|BLACK|<empty>]\u001B[0m- to join a game
+            \u001B[0;35mredraw \u001B[0m- to show the gameboard
+            \u001B[0;35mmark move \u001B[0m- to join a game
             \u001B[0;35mhighlight legal moves\u001B[0m - when you are done
             \u001B[0;35mresign \u001B[0;34m<ID>\u001B[0m- to observe a game
             \u001B[0;35mleave\u001B[0m- all games
             \u001B[0;35mhelp\u001B[0m - show commands\u001B[0m
             """;
-    public Gameplay(ServerFacade facade, String username) {
+    public Gameplay(ServerFacade facade, WebSocketFacade webSocketFacade, String username, String playerColor, String gameID) {
         serverFacade = facade;
+        this.webSocketFacade = webSocketFacade;
         this.username = username;
+        this.playerColor = playerColor;
+        this.gameID = gameID;
     }
     public void run() {
+        //open a websocket first thing
+        System.out.println("joined game " + gameID);
+        webSocketFacade.sendMessage("Hi from the client, hopefully I punched through!");
+
+
         Scanner scanner = new Scanner(System.in);
         boolean quit = false;
-
-        drawBoard(true);
-        System.out.println("");
-        drawBoard(false);
 
         while (!quit) {
             System.out.print("\u001B[49m\u001B[32m[PLAYING]\u001B[0m  >>> ");
@@ -41,14 +49,16 @@ public class Gameplay {
                 case "help":
                     System.out.println(HELP);
                     break;
-                case "redraw chess board":
-                    System.out.println("\u001B[0mTO DO");
-
+                case "redraw":
+                    if (playerColor.equals("BLACK")) {
+                        drawBoard(false);
+                    } else {
+                        drawBoard(true);
+                    }
                     break;
                 case "leave":
-                    System.out.println("\u001B[0mTO DO");
-
-                    break;
+                    System.out.println("\u001B[0mBye!");
+                    return;
                 case "mark move":
                     System.out.println("\u001B[0mTO DO");
 

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import ui.EscapeSequences;
 
 public class Postlogin {
     private ServerFacade serverFacade;
@@ -142,6 +143,7 @@ public class Postlogin {
         try {
             var newGame = serverFacade.createGame(auth, gameName);
             System.out.println("Created game with true ID: " + newGame.gameID());
+            list(auth);
         } catch (ResponseException e) {
             System.out.println("Create game failed: " + e);
         }

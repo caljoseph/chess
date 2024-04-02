@@ -52,7 +52,6 @@ public class Postlogin {
                 case "quit":
                     System.out.println("bye");
                     quit = true;
-                    // this should maybe log me out?
                     break;
                 case "help":
                     System.out.println(HELP);
@@ -80,6 +79,8 @@ public class Postlogin {
                 case "observe":
                     if (tokens.length != 2) {
                         System.out.println("Invalid number of arguments for observe");
+                    } else if (!isInteger(tokens[1])){
+                        System.out.println("Invalid syntax, use: \u001B[0;35mobserve \u001B[0;34m<ID> \u001B[0m to observe a game");
                     } else {
                         join(tokens[1], null);
                     }
@@ -94,7 +95,6 @@ public class Postlogin {
         }
         scanner.close();
     }
-
 
     void logout(String auth) {
         try {
@@ -125,12 +125,20 @@ public class Postlogin {
         }
     }
     boolean join(String gameID, String playerColor) {
+        String dbID = String.valueOf(gameList.get(Integer.valueOf(gameID)));
         try {
+            if (!gameList.containsKey(Integer.valueOf(gameID))) { throw new ResponseException(1000, "This game does not exist."); }
+            if (playerColor == null) {
+                serverFacade.joinGame(auth, null, dbID);
+                new Gameplay(serverFacade, username, auth, null, dbID).run();
+                return true;
+            }
             for (GameData game : gameDataList) {
                 if (game.gameID() != Integer.valueOf(gameID)) { continue; }
                 if (game.whiteUsername().equals(username) && playerColor.equals("WHITE") ||
                         game.blackUsername().equals(username) && playerColor.equals("BLACK")) {
-                    System.out.println("joined game " + gameID);
+
+                    new Gameplay(serverFacade, username, auth, playerColor, dbID).run();
                     return true;
                 }
                 if (game.whiteUsername().equals(username) && playerColor.equals("BLACK") ||
@@ -139,8 +147,8 @@ public class Postlogin {
                 }
             }
 
-            serverFacade.joinGame(auth, playerColor, String.valueOf(gameList.get(Integer.valueOf(gameID))));
-            new Gameplay(serverFacade, username, playerColor, gameID).run();
+            serverFacade.joinGame(auth, playerColor, dbID);
+            new Gameplay(serverFacade, username, auth, playerColor, dbID).run();
             return true;
 
         } catch (ResponseException e) {
@@ -148,6 +156,9 @@ public class Postlogin {
                 System.out.println("The spot is already taken.");
                 return false;
             } else if (e.getMessage().equals("You already joined this game as the other color.")) {
+                System.out.println(e.getMessage());
+                return false;
+            } else if (e.getMessage().equals("This game does not exist.")) {
                 System.out.println(e.getMessage());
                 return false;
             } else {

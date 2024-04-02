@@ -64,8 +64,11 @@ public class Prelogin {
 
             new Postlogin(serverFacade, username, auth).run();
         } catch (ResponseException e) {
-
+            if (e.getMessage().equals("failure: 401")) {
+                System.out.println("Incorrect credentials");
+            } else {
                 System.out.println("Login failed: " + e);
+            }
 
         }
     }

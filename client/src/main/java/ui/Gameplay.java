@@ -1,5 +1,8 @@
 package ui;
 
+import com.google.gson.Gson;
+import webSocketMessages.userCommands.UserGameCommand;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -13,9 +16,9 @@ public class Gameplay {
     private final String HELP = """
             \u001B[0;35mredraw \u001B[0m- to show the gameboard
             \u001B[0;35mmark move \u001B[0m- to join a game
-            \u001B[0;35mhighlight legal moves\u001B[0m - when you are done
-            \u001B[0;35mresign \u001B[0;34m<ID>\u001B[0m- to observe a game
-            \u001B[0;35mleave\u001B[0m- all games
+            \u001B[0;35mmoves\u001B[0m - highlight legal moves
+            \u001B[0;35mresign \u001B[0;34m<ID>\u001B[0m- forfeit the game
+            \u001B[0;35mleave\u001B[0m- exit gameplay for now
             \u001B[0;35mhelp\u001B[0m - show commands\u001B[0m
             """;
     public Gameplay(ServerFacade facade, WebSocketFacade webSocketFacade, String username, String playerColor, String gameID) {
@@ -27,8 +30,11 @@ public class Gameplay {
     }
     public void run() {
         //open a websocket first thing
+        var serializer = new Gson();
+
         System.out.println("joined game " + gameID);
         webSocketFacade.sendMessage("Hi from the client, hopefully I punched through!");
+        webSocketFacade.sendMessage(serializer.toJson(new UserGameCommand("HOWDY!")));
 
 
         Scanner scanner = new Scanner(System.in);
@@ -44,7 +50,6 @@ public class Gameplay {
                 case "quit":
                     System.out.println("\u001B[0mbye");
                     quit = true;
-                    // this should maybe log me out?
                     break;
                 case "help":
                     System.out.println(HELP);

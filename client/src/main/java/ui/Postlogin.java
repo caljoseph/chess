@@ -140,8 +140,7 @@ public class Postlogin {
             }
 
             serverFacade.joinGame(auth, playerColor, String.valueOf(gameList.get(Integer.valueOf(gameID))));
-            WebSocketFacade ws = serverFacade.initiateWebSocket();
-            new Gameplay(serverFacade, ws, username, playerColor, gameID).run();
+            new Gameplay(serverFacade, username, playerColor, gameID).run();
             return true;
 
         } catch (ResponseException e) {

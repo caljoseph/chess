@@ -56,8 +56,8 @@ public class ServerFacade {
         return makeRequest("PUT", path, request, auth, JoinGameResponse.class);
     }
 
-    public WebSocketFacade initiateWebSocket() throws ResponseException {
-        return new WebSocketFacade(serverUrl);
+    public WebSocketFacade initiateWebSocket(OnMessageReceivedListener listener) throws ResponseException {
+        return new WebSocketFacade(serverUrl, listener);
     }
     private static <T> T makeRequest(String method, String path, Object request, String auth, Class<T> responseClass) throws ResponseException {
         try {

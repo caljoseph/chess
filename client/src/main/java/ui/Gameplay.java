@@ -1,12 +1,20 @@
 package ui;
 
 import com.google.gson.Gson;
+import ui.exception.ResponseException;
+import com.google.gson.GsonBuilder;
+import webSocketMessages.serverMessages.*;
+import com.google.gson.JsonObject;
+
+
+import webSocketMessages.serverMessages.Error;
+import webSocketMessages.userCommands.JoinPlayer;
 import webSocketMessages.userCommands.UserGameCommand;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Gameplay {
+public class Gameplay implements OnMessageReceivedListener{
     private ServerFacade serverFacade;
     private WebSocketFacade webSocketFacade;
     private final String username;
@@ -21,20 +29,49 @@ public class Gameplay {
             \u001B[0;35mleave\u001B[0m- exit gameplay for now
             \u001B[0;35mhelp\u001B[0m - show commands\u001B[0m
             """;
-    public Gameplay(ServerFacade facade, WebSocketFacade webSocketFacade, String username, String playerColor, String gameID) {
+    public Gameplay(ServerFacade facade, String username, String playerColor, String gameID) throws ResponseException {
         serverFacade = facade;
-        this.webSocketFacade = webSocketFacade;
+        this.webSocketFacade =  serverFacade.initiateWebSocket(this);;
         this.username = username;
         this.playerColor = playerColor;
         this.gameID = gameID;
     }
+    @Override
+    public void onMessageReceived(String message) {
+        System.out.println("Message received in Gameplay: " + message);
+
+        Gson gson = new Gson();
+        JsonObject jsonObject = gson.fromJson(message, JsonObject.class);
+
+        String typeStr = jsonObject.get("serverMessageType").getAsString();
+        ServerMessage.ServerMessageType type = ServerMessage.ServerMessageType.valueOf(typeStr);
+
+        ServerMessage serverMessage;
+
+        switch (type) {
+            case LOAD_GAME:
+                // Assuming there's a LoadGame class extending ServerMessage
+                serverMessage = gson.fromJson(message, LoadGame.class);
+                break;
+            case ERROR:
+                // Assuming there's an Error class extending ServerMessage
+                serverMessage = gson.fromJson(message, Error.class);
+                break;
+            case NOTIFICATION:
+                serverMessage = gson.fromJson(message, Notification.class);
+                break;
+            default:
+                throw new IllegalArgumentException("Unhandled server message type: " + type);
+        }
+    }
+
     public void run() {
         //open a websocket first thing
-        var serializer = new Gson();
+
 
         System.out.println("joined game " + gameID);
         webSocketFacade.sendMessage("Hi from the client, hopefully I punched through!");
-        webSocketFacade.sendMessage(serializer.toJson(new UserGameCommand("HOWDY!")));
+//        webSocketFacade.sendMessage(serializer.toJson(new JoinPlayer());
 
 
         Scanner scanner = new Scanner(System.in);

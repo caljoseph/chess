@@ -1,21 +1,22 @@
 package ui;
 
 import javax.websocket.Endpoint;
-import com.google.gson.Gson;
+
 import ui.exception.ResponseException;
 
 import javax.websocket.*;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 public class WebSocketFacade extends Endpoint {
 
     Session session;
+    private OnMessageReceivedListener messageListener;
 
 
-    public WebSocketFacade(String url) throws ResponseException {
+    public WebSocketFacade(String url, OnMessageReceivedListener listener) throws ResponseException {
+        this.messageListener = listener;
         try {
             url = url.replace("http", "ws");
             URI socketURI = new URI(url + "/connect");
@@ -28,6 +29,9 @@ public class WebSocketFacade extends Endpoint {
                 @Override
                 public void onMessage(String message) {
                     System.out.println("Received message from server: " + message);
+                    if (messageListener != null) {
+                        messageListener.onMessageReceived(message);
+                    }
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {
@@ -39,7 +43,6 @@ public class WebSocketFacade extends Endpoint {
             this.session.getBasicRemote().sendText(message);
         } catch (IOException e) {
             e.printStackTrace();
-            // Here, consider more sophisticated error handling
         }
     }
 

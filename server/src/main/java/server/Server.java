@@ -5,16 +5,16 @@ import dataAccess.DatabaseManager;
 import dataAccess.db.DBAuthDAO;
 import dataAccess.db.DBGameDAO;
 import dataAccess.db.DBUserDAO;
-import dataAccess.memory.MemoryAuthDAO;
-import dataAccess.memory.MemoryGameDAO;
-import dataAccess.memory.MemoryUserDAO;
 import server.handler.*;
+import server.handler.ws.SessionManager;
+import server.handler.ws.WebSocketHandler;
 import spark.*;
 
 public class Server {
     static DBUserDAO userDAO = new DBUserDAO();
     static DBAuthDAO authDAO = new DBAuthDAO();
     static DBGameDAO gameDAO = new DBGameDAO();
+    static SessionManager sessionManager = new SessionManager();
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -59,6 +59,7 @@ public class Server {
         }
 
     }
+    public static SessionManager getSessionManager() { return sessionManager; }
     public static DBUserDAO getUserDAO(){
         return userDAO;
     }

@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 import com.google.gson.Gson;
@@ -15,9 +16,12 @@ import webSocketMessages.userCommands.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+// The big to do here is to make a better function that prints out the current board.
+
 public class Gameplay implements OnMessageReceivedListener{
     private ServerFacade serverFacade;
     private WebSocketFacade webSocketFacade;
+    private ChessGame game;
     private final String username;
     private final String auth;
     private final String gameID;
@@ -27,8 +31,8 @@ public class Gameplay implements OnMessageReceivedListener{
             \u001B[0;35mredraw \u001B[0m- to show the gameboard
             \u001B[0;35mmark move \u001B[0m- to join a game
             \u001B[0;35mmoves\u001B[0m - highlight legal moves
-            \u001B[0;35mresign \u001B[0;34m<ID>\u001B[0m- forfeit the game
-            \u001B[0;35mleave\u001B[0m- exit gameplay for now
+            \u001B[0;35mresign \u001B[0;34m<ID>\u001B[0m - forfeit the game
+            \u001B[0;35mleave\u001B[0m - exit gameplay for now
             \u001B[0;35mhelp\u001B[0m - show commands\u001B[0m
             """;
     Gson gson = new Gson();
@@ -42,9 +46,6 @@ public class Gameplay implements OnMessageReceivedListener{
     }
     @Override
     public void onMessageReceived(String message) {
-        System.out.println("Message received in Gameplay: " + message);
-
-
         JsonObject jsonObject = gson.fromJson(message, JsonObject.class);
 
         String typeStr = jsonObject.get("serverMessageType").getAsString();
@@ -54,24 +55,39 @@ public class Gameplay implements OnMessageReceivedListener{
 
         switch (type) {
             case LOAD_GAME:
-                serverMessage = gson.fromJson(message, LoadGame.class);
+                handleLoadGame(gson.fromJson(message, LoadGame.class));
                 break;
             case ERROR:
-                serverMessage = gson.fromJson(message, Error.class);
+                handleError(gson.fromJson(message, Error.class));
                 break;
             case NOTIFICATION:
-                serverMessage = gson.fromJson(message, Notification.class);
+                handleNotification(gson.fromJson(message, Notification.class));
                 break;
             default:
                 throw new IllegalArgumentException("Unhandled server message type: " + type);
         }
     }
 
+    private void handleNotification(Notification notification) {
+        System.out.println(notification.getMessage());
+    }
+
+    private void handleError(Error error) {
+        System.out.println("Error: " + error.getErrorMessage());
+    }
+
+    private void handleLoadGame(LoadGame loadGame) {
+        System.out.println("Game received: ");
+        game = loadGame.getGame();
+    }
+
     public void run() {
-        System.out.println("joined game " + gameID);
         if (playerColor != null) {
+            System.out.println("joined game " + gameID);
             webSocketFacade.sendMessage(gson.toJson(new JoinPlayer(auth, Integer.valueOf(gameID))));
         } else {
+            System.out.println("observing game " + gameID + " as an observer");
+
             webSocketFacade.sendMessage(gson.toJson(new JoinObserver(auth, Integer.valueOf(gameID))));
         }
 
@@ -93,10 +109,10 @@ public class Gameplay implements OnMessageReceivedListener{
                     System.out.println(HELP);
                     break;
                 case "redraw":
-                    if (playerColor.equals("BLACK")) {
-                        drawBoard(false);
-                    } else {
+                    if (playerColor == null || playerColor.equals("WHITE")) {
                         drawBoard(true);
+                    } else {
+                        drawBoard(false);
                     }
                     break;
                 case "leave":
@@ -104,12 +120,20 @@ public class Gameplay implements OnMessageReceivedListener{
                     System.out.println("\u001B[0mBye!");
                     return;
                 case "move":
+                    if (playerColor == null) {
+                        System.out.println("\u001B[0mThis command is not available to observers");
+                        break;
+                    }
                     webSocketFacade.sendMessage(gson.toJson(new MakeMove(auth, new ChessMove(new ChessPosition(1,2), new ChessPosition(2,2), null), Integer.valueOf(gameID))));
 
                     System.out.println("\u001B[0mExample move");
 
                     break;
                 case "resign":
+                    if (playerColor == null) {
+                        System.out.println("\u001B[0mThis command is not available to observers");
+                        break;
+                    }
                     webSocketFacade.sendMessage(gson.toJson(new Resign(auth, Integer.valueOf(gameID))));
                     System.out.println("\u001B[0mResign");
                     break;

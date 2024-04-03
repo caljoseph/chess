@@ -10,4 +10,12 @@ public class JoinPlayer extends UserGameCommand {
         commandType = CommandType.JOIN_PLAYER;
         this.gameID = gameID;
     }
+
+    public int getGameID() {
+        return gameID;
+    }
+
+    public ChessGame.TeamColor getPlayerColor() {
+        return playerColor;
+    }
 }

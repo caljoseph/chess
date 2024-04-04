@@ -1,5 +1,7 @@
 package chess;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -33,6 +35,19 @@ public class ChessPosition {
                 "row=" + row +
                 ", col=" + col +
                 '}';
+    }
+    public String prettyString() {
+        Map<Integer, Character> mapping = new HashMap<>();
+        mapping.put(1, 'a');
+        mapping.put(2, 'b');
+        mapping.put(3, 'c');
+        mapping.put(4, 'd');
+        mapping.put(5, 'e');
+        mapping.put(6, 'f');
+        mapping.put(7, 'g');
+        mapping.put(8, 'h');
+
+        return String.valueOf(row) + mapping.get(col);
     }
     @Override
     public int hashCode() {

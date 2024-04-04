@@ -31,12 +31,24 @@ public class ChessPiece {
      * The various different chess piece options
      */
     public enum PieceType {
-        KING,
-        QUEEN,
-        BISHOP,
-        KNIGHT,
-        ROOK,
-        PAWN
+        KING("K"),
+        QUEEN("Q"),
+        BISHOP("B"),
+        KNIGHT("N"),
+        ROOK("R"),
+        PAWN("P");
+
+        private final String letterRepresentation;
+
+        // Constructor
+        PieceType(String letter) {
+            this.letterRepresentation = letter;
+        }
+
+        // Method to get the letter representation
+        public String getLetter() {
+            return letterRepresentation;
+        }
     }
 
     /**

@@ -8,6 +8,9 @@ public record GameData(int gameID, String whiteUsername, String blackUsername, S
     public GameData(GameData original, String newWhiteUsername, String newBlackUsername) {
         this(original.gameID(), newWhiteUsername, newBlackUsername, original.gameName(), original.game());
     }
+    public GameData(GameData original, ChessGame updatedGame) {
+        this(original.gameID(), original.whiteUsername(), original.blackUsername(), original.gameName(), updatedGame);
+    }
     @Override
     public int gameID() {
         return gameID;

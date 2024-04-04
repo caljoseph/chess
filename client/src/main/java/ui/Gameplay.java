@@ -2,8 +2,10 @@ package ui;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPiece;
 import chess.ChessPosition;
 import com.google.gson.Gson;
+import ui.exception.PositionParseException;
 import ui.exception.ResponseException;
 import com.google.gson.GsonBuilder;
 import webSocketMessages.serverMessages.*;
@@ -14,6 +16,8 @@ import webSocketMessages.serverMessages.Error;
 import webSocketMessages.userCommands.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 // The big to do here is to make a better function that prints out the current board.
@@ -35,6 +39,10 @@ public class Gameplay implements OnMessageReceivedListener{
             \u001B[0;35mleave\u001B[0m - exit gameplay for now
             \u001B[0;35mhelp\u001B[0m - show commands\u001B[0m
             """;
+    Map<Character, Integer> letterToNumber = new HashMap<>();
+
+
+
     Gson gson = new Gson();
     public Gameplay(ServerFacade facade, String username, String auth, String playerColor, String gameID) throws ResponseException {
         serverFacade = facade;
@@ -70,6 +78,7 @@ public class Gameplay implements OnMessageReceivedListener{
 
     private void handleNotification(Notification notification) {
         System.out.println(notification.getMessage());
+        System.out.print("\u001B[49m\u001B[32m[PLAYING]\u001B[0m  >>> ");
     }
 
     private void handleError(Error error) {
@@ -77,20 +86,26 @@ public class Gameplay implements OnMessageReceivedListener{
     }
 
     private void handleLoadGame(LoadGame loadGame) {
-        System.out.println("Game received: ");
         game = loadGame.getGame();
+        if (playerColor == null || playerColor.equals("WHITE")) {
+            drawBoard(ChessGame.TeamColor.WHITE);
+        } else {
+            drawBoard(ChessGame.TeamColor.BLACK);
+        }
+        System.out.print("\n\u001B[49m\u001B[32m[PLAYING]\u001B[0m  >>> ");
     }
 
     public void run() {
         if (playerColor != null) {
             System.out.println("joined game " + gameID);
-            webSocketFacade.sendMessage(gson.toJson(new JoinPlayer(auth, Integer.valueOf(gameID))));
+            webSocketFacade.sendMessage(gson.toJson(new JoinPlayer(auth, Integer.valueOf(gameID), ChessGame.TeamColor.valueOf(playerColor))));
         } else {
             System.out.println("observing game " + gameID + " as an observer");
 
             webSocketFacade.sendMessage(gson.toJson(new JoinObserver(auth, Integer.valueOf(gameID))));
         }
 
+        createLetterMapping();
         Scanner scanner = new Scanner(System.in);
         boolean quit = false;
 
@@ -98,7 +113,6 @@ public class Gameplay implements OnMessageReceivedListener{
             System.out.print("\u001B[49m\u001B[32m[PLAYING]\u001B[0m  >>> ");
             String input = scanner.nextLine();
             var tokens = input.split(" ");
-
 
             switch (tokens[0]) {
                 case "quit":
@@ -110,13 +124,20 @@ public class Gameplay implements OnMessageReceivedListener{
                     break;
                 case "redraw":
                     if (playerColor == null || playerColor.equals("WHITE")) {
-                        drawBoard(true);
+                        drawBoard(ChessGame.TeamColor.WHITE);
                     } else {
-                        drawBoard(false);
+                        drawBoard(ChessGame.TeamColor.BLACK);
                     }
                     break;
                 case "leave":
-                    webSocketFacade.sendMessage(gson.toJson(new Leave(auth, Integer.valueOf(gameID))));
+                    if (playerColor == null){
+                        webSocketFacade.sendMessage(gson.toJson(new Leave(auth, Integer.valueOf(gameID), null)));
+                    }
+                    else if (playerColor.equals("WHITE")){
+                        webSocketFacade.sendMessage(gson.toJson(new Leave(auth, Integer.valueOf(gameID), ChessGame.TeamColor.WHITE)));
+                    } else {
+                        webSocketFacade.sendMessage(gson.toJson(new Leave(auth, Integer.valueOf(gameID), ChessGame.TeamColor.BLACK)));
+                    }
                     System.out.println("\u001B[0mBye!");
                     return;
                 case "move":
@@ -124,10 +145,21 @@ public class Gameplay implements OnMessageReceivedListener{
                         System.out.println("\u001B[0mThis command is not available to observers");
                         break;
                     }
-                    webSocketFacade.sendMessage(gson.toJson(new MakeMove(auth, new ChessMove(new ChessPosition(1,2), new ChessPosition(2,2), null), Integer.valueOf(gameID))));
+                    if (tokens.length != 3) {
+                        System.out.println("\u001B[0mIncorrect number of arguments for making a move");
+                        break;
+                    }
 
-                    System.out.println("\u001B[0mExample move");
+                    try {
+                        int startRow = extractCoordinates(tokens[1])[0];
+                        int startCol = extractCoordinates(tokens[1])[1];
+                        int endRow = extractCoordinates(tokens[2])[0];
+                        int endCol = extractCoordinates(tokens[2])[1];
 
+                        webSocketFacade.sendMessage(gson.toJson(new MakeMove(auth, new ChessMove(new ChessPosition(startRow, startCol), new ChessPosition(endRow,endCol), null), Integer.valueOf(gameID))));
+                    } catch (PositionParseException e) {
+                        System.out.println("\u001B[0m" + e.getMessage());
+                    }
                     break;
                 case "resign":
                     if (playerColor == null) {
@@ -135,7 +167,6 @@ public class Gameplay implements OnMessageReceivedListener{
                         break;
                     }
                     webSocketFacade.sendMessage(gson.toJson(new Resign(auth, Integer.valueOf(gameID))));
-                    System.out.println("\u001B[0mResign");
                     break;
                 case "highlight legal moves":
                     System.out.println("\u001B[0mTO DO");
@@ -149,25 +180,50 @@ public class Gameplay implements OnMessageReceivedListener{
         }
 
     }
-
-
-    private void drawBoard(boolean rightSideUp) {
-
-        String[] topLetters = {"h", "g", "f", "e", "d", "c", "b", "a"};
-        String[] sideNumbers = {"8", "7", "6", "5", "4", "3", "2", "1"};
-        String[] edge = {"R", "N", "B", "K", "Q", "B", "N", "R"};
-
-        int start = rightSideUp ? 8 : 1;
-        int end = rightSideUp ? 1 : 8;
-        int step = rightSideUp ? -1 : 1;
-
-        if (!rightSideUp) {
-            for (int i = 0; i < topLetters.length / 2; i++) {
-                String temp = topLetters[i];
-                topLetters[i] = topLetters[topLetters.length - 1 - i];
-                topLetters[topLetters.length - 1 - i] = temp;
-            }
+    private int[] extractCoordinates(String position) throws PositionParseException {
+        if (position == null || position.length() != 2) {
+            throw new PositionParseException("Invalid position format. Position must be exactly 2 characters.");
         }
+
+        char rowChar = position.charAt(0);
+        if (rowChar < '1' || rowChar > '8') {
+            throw new PositionParseException("Invalid row. Must be a digit from 1 to 8.");
+        }
+        int row = Character.getNumericValue(rowChar);
+
+        char columnLetter = position.charAt(1);
+        if (!letterToNumber.containsKey(columnLetter)) {
+            throw new PositionParseException("Invalid column. Must be a letter from 'a' to 'h'.");
+        }
+        int column = letterToNumber.get(columnLetter);
+
+        return new int[]{row, column};
+    }
+
+
+    //RED IS WHITE
+    //UPPERCASE IS WHITE
+
+    //BLUE IS BLACK
+    //LOWERCASE IS BLACK
+
+    private void drawBoard(ChessGame.TeamColor color) {
+        var board = game.getBoard();
+        System.out.println(board.toString());
+
+        boolean white = color == ChessGame.TeamColor.WHITE;
+        int start_i = white ? 8 : 1;
+        int step_i = white ? -1 : 1;
+        int start_j = white ? 1 : 8;
+        int step_j = white ? 1 : -1;
+
+        String[] topLetters;
+        if (white) {
+            topLetters = new String[]{"a", "b", "c", "d", "e", "f", "g", "h"};
+        } else {
+            topLetters = new String[]{"h", "g", "f", "e", "d", "c", "b", "a"};
+        }
+        String[] sideNumbers = {"1", "2", "3", "4", "5", "6", "7", "8"};
 
         System.out.print("\u001b[30;47;1m    ");
         for (String letter : topLetters) {
@@ -175,39 +231,39 @@ public class Gameplay implements OnMessageReceivedListener{
         }
         System.out.println("  \u001B[49m");
 
-        for (int i = start; rightSideUp ? i >= end : i <= end; i += step) {
-            System.out.print("\u001b[30;47;1m " + sideNumbers[i - 1] + " ");
-            if ( !rightSideUp ) {
-                edge = new String[]{"R", "N", "B", "Q", "K", "B", "N", "R"};
-            }
+        for (int i = start_i; white ? i > 0 : i < 9; i += step_i) {
+            System.out.print("\u001b[30;47;1m " + sideNumbers[white ? i - 1 : i - 1] + " ");
 
-            for (int j = 0; j < 8; j++) {
-                String piece = edge[j];
-                boolean isWhitePiece = rightSideUp ? (i + j) % 2 == 0 : (i + j + 1) % 2 == 0;
-                boolean isFirstRow = i == 8;
-                boolean isSecondRow = i == 7;
-                boolean isSeventhRow = i == 2;
-                boolean isEighthRow = i == 1;
+            for (int j = start_j; white ? j < 9 : j > 0; j += step_j) {
+                boolean isWhiteSquare = (i + j + 1) % 2 == 0;
 
-                if (isWhitePiece) {
-                    if (isFirstRow || isSecondRow) {
-                        System.out.print("\u001b[31;107m " + (isSecondRow ? "P" : piece) + " ");
-                    } else if (isSeventhRow || isEighthRow) {
-                        System.out.print("\u001b[34;107m " + (isSeventhRow ? "P" : piece) + " ");
+                ChessPosition position = new ChessPosition(i,j);
+
+                ChessPiece piece = board.getPiece(position);
+                if (piece == null) {
+                    if (isWhiteSquare) {
+                        System.out.print("\u001b[34;107m   ");
                     } else {
-                        System.out.print("\u001b[30;107m   ");
+                        System.out.print("\u001b[31;40m   ");
+                    }
+                    continue;
+                }
+
+                if (isWhiteSquare) {
+                    if (piece.getTeamColor().equals(ChessGame.TeamColor.WHITE)) {
+                        System.out.print("\u001b[31;107m " + piece.getPieceType().getLetter() + " ");
+                    } else {
+                        System.out.print("\u001b[34;107m " + piece.getPieceType().getLetter() + " ");
                     }
                 } else {
-                    if (isFirstRow || isSecondRow) {
-                        System.out.print("\u001b[31;40m " + (isSecondRow ? "P" : piece) + " ");
-                    } else if (isSeventhRow || isEighthRow) {
-                        System.out.print("\u001b[34;40m " + (isSeventhRow ? "P" : piece) + " ");
+                    if (piece.getTeamColor().equals(ChessGame.TeamColor.WHITE)) {
+                        System.out.print("\u001b[31;40m " + piece.getPieceType().getLetter() + " ");
                     } else {
-                        System.out.print("\u001b[37;40m   ");
+                        System.out.print("\u001b[34;40m " + piece.getPieceType().getLetter() + " ");
                     }
                 }
             }
-            System.out.println("\u001b[30;47;1m " + sideNumbers[i - 1] + " " + "\u001B[49m");
+            System.out.println("\u001b[30;47;1m " + sideNumbers[white ? i - 1 : i - 1] + " " + "\u001B[49m");
         }
 
         System.out.print("\u001b[30;47;1m    ");
@@ -216,7 +272,14 @@ public class Gameplay implements OnMessageReceivedListener{
         }
         System.out.println("  \u001B[49m");
     }
-
-
-
+    void createLetterMapping() {
+        letterToNumber.put('a', 1);
+        letterToNumber.put('b', 2);
+        letterToNumber.put('c', 3);
+        letterToNumber.put('d', 4);
+        letterToNumber.put('e', 5);
+        letterToNumber.put('f', 6);
+        letterToNumber.put('g', 7);
+        letterToNumber.put('h', 8);
+    }
 }

@@ -12,7 +12,8 @@ import java.util.Objects;
  */
 public class ChessGame {
     private TeamColor turnColor;
-    private ChessBoard board = new ChessBoard();
+    private ChessBoard board;
+    private boolean isOver;
 
     @Override
     public boolean equals(Object o) {
@@ -26,8 +27,18 @@ public class ChessGame {
         return Objects.hash(turnColor, getBoard());
     }
 
+    public boolean isOver() {
+        return isOver;
+    }
+
+    public void setOver(boolean over) {
+        isOver = over;
+    }
+
     public ChessGame() {
+        isOver = false;
         turnColor = TeamColor.WHITE;
+        board = new ChessBoard();
     }
 
     /**
@@ -112,6 +123,15 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        if (isInCheckmate(TeamColor.WHITE)) {
+            throw new InvalidMoveException("White is in checkmate. The game is over.");
+        } else if (isInCheckmate(TeamColor.BLACK)) {
+            throw new InvalidMoveException("Black is in checkmate. The game is over.");
+        } else if (isInStalemate(TeamColor.WHITE) && isInStalemate(TeamColor.BLACK)) {
+            throw new InvalidMoveException("Stalemate. The game is over.");
+        } else if (getTeamTurn() == null) {
+            throw new InvalidMoveException("The game is over due to resign.");
+        }
         ChessPosition startPos = move.getStartPosition();
         ChessPosition endPos = move.getEndPosition();
         ChessPiece currentPiece = board.getPiece(startPos);
@@ -153,7 +173,7 @@ public class ChessGame {
         }
     }
 
-    private TeamColor otherTeam(TeamColor team) {
+    public TeamColor otherTeam(TeamColor team) {
         if (team == TeamColor.WHITE) {
             return TeamColor.BLACK;
         } else {

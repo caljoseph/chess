@@ -64,6 +64,7 @@ public class ChessBoard {
         return result.toString();
     }
     public ChessBoard(){
+        resetBoard();
      }
     public ChessBoard(ChessBoard o){
         for (int row = 0; row < 8; row++) {

@@ -1,8 +1,12 @@
 package ui;
 
+import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import model.GameData;
 import ui.exception.ResponseException;
 
+import java.io.InvalidClassException;
 import java.util.*;
 
 import ui.EscapeSequences;
@@ -68,12 +72,19 @@ public class Postlogin {
                     break;
                 case "join":
                     if (tokens.length != 3) {
-                        System.out.println("Invalid number of arguments for create game");
+                        System.out.println("Invalid number of arguments for join game");
                     }
                     else if (!isInteger(tokens[1]) || (!tokens[2].equals("WHITE") && !tokens[2].equals("BLACK"))) {
                         System.out.println("Invalid syntax, use: \u001B[0;35mjoin \u001B[0;34m<ID> [WHITE|BLACK|<empty>]\u001B[0m to join a game");
                     } else {
-                        join(tokens[1], tokens[2]);
+                        if(join(tokens[1], tokens[2])) {
+                            try {
+                                Thread.sleep(50);
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                            }
+                            list(auth);
+                        }
                     }
                     break;
                 case "observe":
@@ -82,7 +93,14 @@ public class Postlogin {
                     } else if (!isInteger(tokens[1])){
                         System.out.println("Invalid syntax, use: \u001B[0;35mobserve \u001B[0;34m<ID> \u001B[0m to observe a game");
                     } else {
-                        join(tokens[1], null);
+                        if(join(tokens[1], null)) {
+                            try {
+                                Thread.sleep(50);
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                            }
+                            list(auth);
+                        }
                     }
                     break;
                 case "logout":
@@ -165,6 +183,8 @@ public class Postlogin {
                 System.out.println("Join game failed with message " + e.getMessage());
                 return false;
             }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
     void create(String gameName) {
@@ -188,4 +208,5 @@ public class Postlogin {
             return false;
         }
     }
+
 }

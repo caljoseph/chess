@@ -19,7 +19,7 @@ public class Postlogin {
     private ArrayList<GameData> gameDataList = new ArrayList<>();
     // maps display ID to true ID
     private int numGames = 0;
-    private final String HELP = """
+    private final static String HELP = """
             \u001B[0;35mcreate \u001B[0;34m<NAME>\u001B[0m- to create a game
             \u001B[0;35mlist \u001B[0m- all games
             \u001B[0;35mjoin \u001B[0;34m<ID> [WHITE|BLACK|<empty>]\u001B[0m- to join a game
@@ -193,11 +193,6 @@ public class Postlogin {
             list(auth);
         } catch (ResponseException e) {
             System.out.println("Create game failed: " + e);
-        }
-    }
-    private void printCorrespondingPairs() {
-        for (Map.Entry<Integer, Integer> entry : gameList.entrySet()) {
-            System.out.println("Display ID: " + entry.getKey() + ", True ID: " + entry.getValue());
         }
     }
     private static boolean isInteger(String s) {

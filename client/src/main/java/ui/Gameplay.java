@@ -31,7 +31,7 @@ public class Gameplay implements OnMessageReceivedListener{
     private final String gameID;
     private final String playerColor;
 
-    private final String HELP = """
+    private final static String HELP = """
             \u001B[0;35mredraw \u001B[0m- to show the gameboard
             \u001B[0;35mmark move \u001B[0m- to join a game
             \u001B[0;35mmoves\u001B[0m - highlight legal moves
@@ -212,10 +212,10 @@ public class Gameplay implements OnMessageReceivedListener{
         System.out.println(board.toString());
 
         boolean white = color == ChessGame.TeamColor.WHITE;
-        int start_i = white ? 8 : 1;
-        int step_i = white ? -1 : 1;
-        int start_j = white ? 1 : 8;
-        int step_j = white ? 1 : -1;
+        int startI = white ? 8 : 1;
+        int stepI = white ? -1 : 1;
+        int startJ = white ? 1 : 8;
+        int stepJ = white ? 1 : -1;
 
         String[] topLetters;
         if (white) {
@@ -231,10 +231,10 @@ public class Gameplay implements OnMessageReceivedListener{
         }
         System.out.println("  \u001B[49m");
 
-        for (int i = start_i; white ? i > 0 : i < 9; i += step_i) {
+        for (int i = startI; white ? i > 0 : i < 9; i += stepI) {
             System.out.print("\u001b[30;47;1m " + sideNumbers[white ? i - 1 : i - 1] + " ");
 
-            for (int j = start_j; white ? j < 9 : j > 0; j += step_j) {
+            for (int j = startJ; white ? j < 9 : j > 0; j += stepJ) {
                 boolean isWhiteSquare = (i + j + 1) % 2 == 0;
 
                 ChessPosition position = new ChessPosition(i,j);

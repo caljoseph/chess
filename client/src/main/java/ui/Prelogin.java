@@ -7,8 +7,8 @@ import java.util.Scanner;
 
 public class Prelogin {
     private ServerFacade serverFacade;
-    private final String GREETING = "Welcome to 240 Chess. Type 'help' to get started.";
-    private final String HELP = "\u001B[0;35m" +
+    private final static String GREETING = "Welcome to 240 Chess. Type 'help' to get started.";
+    private final static String HELP = "\u001B[0;35m" +
             "register \u001B[0;34m<USERNAME> <PASSWORD> <EMAIL> \u001B[0m- to create an account\n" +
             "\u001B[0;35mlogin \u001B[0;34m<USERNAME> <PASSWORD> \u001B[0m- to play chess\n" +
             "\u001B[0;35mquit\u001B[0m - playing chess\n" +
